@@ -7,12 +7,12 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "./navigation-menu.tsx";
+} from "../ui/navigation-menu.tsx";
 import { GiHamburgerMenu } from "react-icons/gi";
 
-const NavBar = () => {
+const NavBar = ({ onToggleSideBar }: { onToggleSideBar: () => void }) => {
   return (
-    <div className="relative w-full z-20 bg-black/40">
+    <nav className="relative w-full z-20 bg-black/40">
       <NavigationMenu viewport={false} className="w-full">
         <div className="flex w-full items-center justify-between px-4 py-3">
           <div className="flex items-center gap-4">
@@ -27,7 +27,11 @@ const NavBar = () => {
             <SearchBar />
           </div>
 
-          <GiHamburgerMenu className="ml-auto text-gray-400 cursor-pointer hover:text-white duration-250 lg:hidden" />
+          {/* Hamburger Icon */}
+          <GiHamburgerMenu
+            onClick={onToggleSideBar}
+            className="ml-auto text-gray-400 cursor-pointer hover:text-white duration-250 lg:hidden"
+          />
 
           <NavigationMenuList className="hidden lg:flex items-center gap-8 text-base text-white">
             <NavigationMenuItem>
@@ -55,24 +59,15 @@ const NavBar = () => {
               Sign In
             </button>
             <button
-              className="
-    px-5 py-1
-    bg-linear-to-r from-[#3B82F6] to-[#60A5FA]
-    text-white font-semibold
-    rounded-xl text-base
-    shadow-md shadow-blue-500/20
-    transition-all duration-300
-    hover:shadow-lg hover:shadow-blue-400/30
-    hover:scale-[1.04]
-    cursor-pointer
-  "
+              className="px-5 py-1 bg-linear-to-r from-[#3B82F6] to-[#60A5FA]   text-white font-semibold rounded-xl text-base 
+              shadow-md shadow-blue-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/30 hover:scale-[1.04] cursor-pointer"
             >
               Sign Up For Free
             </button>
           </NavigationMenuList>
         </div>
       </NavigationMenu>
-    </div>
+    </nav>
   );
 };
 
