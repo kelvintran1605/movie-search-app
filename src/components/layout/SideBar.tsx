@@ -1,6 +1,14 @@
 import { IoMdClose as CloseButton } from "react-icons/io";
 
-const SideBar = ({ onToggleSideBar }: { onToggleSideBar: () => void }) => {
+const SideBar = ({
+  onToggleSideBar,
+  onToggleSignUp,
+  onToggleSignIn,
+}: {
+  onToggleSideBar: () => void;
+  onToggleSignUp: () => void;
+  onToggleSignIn: () => void;
+}) => {
   const sideBarSections = [
     {
       group: "Movies",
@@ -22,11 +30,8 @@ const SideBar = ({ onToggleSideBar }: { onToggleSideBar: () => void }) => {
   ];
   return (
     <div
-      className="
-    p-10 text-white absolute top-0 left-1/2 -translate-x-1/2
-    h-dvh w-full bg-[#202629] flex flex-col z-50
-    md:w-[90%] md:h-[90vh] md:top-[5vh] lg:w-[40%] rounded-md
-  "
+      className="fade p-10 text-white fixed top-0 left-1/2 -translate-x-1/2 h-dvh w-full bg-[#202629] flex flex-col z-50
+    md:w-[50%] md:h-[90vh] md:top-[5vh] rounded-md"
     >
       <CloseButton
         onClick={onToggleSideBar}
@@ -35,12 +40,14 @@ const SideBar = ({ onToggleSideBar }: { onToggleSideBar: () => void }) => {
       {/* Buttons */}
       <div className="w-full flex justify-center gap-4">
         <button
+          onClick={onToggleSignUp}
           className="px-5 py-1 bg-linear-to-r from-[#3B82F6] to-[#60A5FA] text-white font-semibold rounded-xl text-base shadow-md 
           shadow-blue-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/30 hover:scale-[1.04] cursor-pointer"
         >
           Sign Up For Free
         </button>
         <button
+          onClick={onToggleSignIn}
           className="px-5 hover:bg-gray-300 py-1 bg-linear-to-r from-gray-700 to-gray-800 text-white font-semibold rounded-xl text-base shadow-md 
           shadow-blue-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/30 hover:scale-[1.04] cursor-pointer"
         >

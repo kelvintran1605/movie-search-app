@@ -10,7 +10,15 @@ import {
 } from "../ui/navigation-menu.tsx";
 import { GiHamburgerMenu } from "react-icons/gi";
 
-const NavBar = ({ onToggleSideBar }: { onToggleSideBar: () => void }) => {
+const NavBar = ({
+  onToggleSideBar,
+  onToggleSignUp,
+  onToggleSignIn,
+}: {
+  onToggleSideBar: () => void;
+  onToggleSignUp: () => void;
+  onToggleSignIn: () => void;
+}) => {
   return (
     <nav className="relative w-full z-20 bg-black/40">
       <NavigationMenu viewport={false} className="w-full">
@@ -55,10 +63,14 @@ const NavBar = ({ onToggleSideBar }: { onToggleSideBar: () => void }) => {
                 <NavigationMenuLink>Top Rated</NavigationMenuLink>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            <button className="font-bold hover:underline cursor-pointer">
+            <button
+              onClick={onToggleSignIn}
+              className="font-bold hover:underline cursor-pointer"
+            >
               Sign In
             </button>
             <button
+              onClick={onToggleSignUp}
               className="px-5 py-1 bg-linear-to-r from-[#3B82F6] to-[#60A5FA]   text-white font-semibold rounded-xl text-base 
               shadow-md shadow-blue-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/30 hover:scale-[1.04] cursor-pointer"
             >
