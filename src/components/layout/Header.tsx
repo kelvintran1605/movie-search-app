@@ -1,4 +1,3 @@
-import Hero from "./Hero";
 import NavBar from "./NavBar";
 
 const Header = ({
@@ -11,10 +10,7 @@ const Header = ({
   onToggleSignIn: () => void;
 }) => {
   return (
-    <header className="relative h-[700px]">
-      {/* Background */}
-      <Hero />
-
+    <header className="relative">
       {/* NavBar */}
       <NavBar
         onToggleSignIn={onToggleSignIn}

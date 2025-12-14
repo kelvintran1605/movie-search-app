@@ -3,8 +3,8 @@ import Footer from "../components/layout/Footer";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import SideBar from "@/components/layout/SideBar";
-import SignUpPopUp from "@/components/layout/SignUpPopUp";
-import SignInPopUp from "@/components/layout/SignInPopUp";
+import SignUpPopUp from "@/features/auth/components/SignUpPopUp";
+import SignInPopUp from "@/features/auth/components/SignInPopUp";
 const MainLayout = () => {
   // Sidebar state
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
@@ -59,7 +59,7 @@ const MainLayout = () => {
           onToggleSignIn={handleToggleSignIn}
         />
       )}
-      <main style={{ padding: "20px" }}>
+      <main>
         <Outlet />
       </main>
       <Footer />

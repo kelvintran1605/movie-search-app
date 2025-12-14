@@ -1,6 +1,6 @@
 const Hero = () => {
   return (
-    <div className="absolute inset-0 w-full h-full z-10 flex">
+    <div className="absolute inset-0 w-full h-[700px] z-10 flex">
       <div className="w-full h-full relative">
         <img
           className="w-full h-full object-cover"

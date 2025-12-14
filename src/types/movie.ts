@@ -1,9 +1,9 @@
 export type MovieSummary = {
   id: number;
   title: string;
-  year?: string;
-  imgUrl?: string;
-  rating?: number;
+  year: string;
+  imgUrl: string;
+  rating: number;
   overview?: string;
   mediaType?: "movie" | "tv";
 };

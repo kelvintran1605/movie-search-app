@@ -20,18 +20,18 @@ const NavBar = ({
   onToggleSignIn: () => void;
 }) => {
   return (
-    <nav className="relative w-full z-20 bg-black/40">
+    <nav className="relative w-full z-20 bg-black/90">
       <NavigationMenu viewport={false} className="w-full">
         <div className="flex w-full items-center justify-between px-4 py-3">
           <div className="flex items-center gap-4">
             <div
-              className="text-3xl font-bold bg-linear-to-b
+              className="text-3xl font-bold bg-linear-to-b cursor-pointer
               from-[#60A5FA] via-[#3B82F6] to-[#3B82F6]/80
               bg-clip-text text-transparent tracking-wider leading-none translate-y-[-3px] lg:text-5xl"
             >
               Movix
             </div>
-
+    
             <SearchBar />
           </div>
 
