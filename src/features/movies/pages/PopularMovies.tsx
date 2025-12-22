@@ -5,6 +5,8 @@ import PaginationBar from "../components/PaginationBar";
 import { useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useSearchParams } from "react-router-dom";
+
 type GenreOption = { name: string; value: number };
 
 export type Filters = {

@@ -1,7 +1,8 @@
 import { FcGoogle } from "react-icons/fc";
-import { FaApple, FaEyeSlash, FaEye } from "react-icons/fa";
+import { FaApple, FaDiscord, FaEyeSlash, FaEye } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { IoMdClose as CloseButton } from "react-icons/io";
+import { supabase } from "@/lib/supabase";
 
 const SignUpPopUp = ({
   onToggleSignUp,
@@ -13,6 +14,10 @@ const SignUpPopUp = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<string>("");
   const images = [
     {
       name: "Stranger Things",
@@ -28,6 +33,62 @@ const SignUpPopUp = ({
     },
   ];
 
+  // Function to handle google sign in
+  const handleGoogleSignUp = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:5173",
+      },
+    });
+
+    if (error) {
+      console.error(error.message);
+    }
+  };
+
+  // Function to handle discord sign in
+  const handleDiscordSignUp = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "discord",
+      options: {
+        redirectTo: "http://localhost:5173",
+      },
+    });
+
+    if (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleInAppSignUp = async (e: any) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setErrors("Passwords do not match.");
+      return;
+    }
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      setErrors(error.message);
+      return;
+    }
+
+    if (!data.session) {
+      setErrors(
+        "Check your email to confirm your account. If you already have an account, try signing in or resetting your password."
+      );
+      return;
+    }
+
+    setTimeout(() => {
+      onToggleSignUp();
+    }, 500);
+  };
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -57,7 +118,10 @@ const SignUpPopUp = ({
         />
 
         {/* Form */}
-        <form className="flex flex-col w-full lg:w-1/2 p-8 md:p-12 overflow-y-auto">
+        <form
+          onSubmit={handleInAppSignUp}
+          className="flex flex-col w-full lg:w-1/2 p-8 md:p-12 overflow-y-auto"
+        >
           <CloseButton
             onClick={onToggleSignUp}
             className="absolute top-3 right-3 text-2xl text-gray-500 hover:text-gray-400 cursor-pointer"
@@ -78,6 +142,7 @@ const SignUpPopUp = ({
 
           {/* Google button */}
           <button
+            onClick={handleGoogleSignUp}
             type="button"
             className="flex items-center justify-center gap-4 font-semibold text-lg border border-gray-400 w-full rounded-md p-2.5 hover:bg-gray-200 cursor-pointer transition duration-150"
           >
@@ -87,11 +152,12 @@ const SignUpPopUp = ({
 
           {/* Apple button */}
           <button
+            onClick={handleDiscordSignUp}
             type="button"
             className="flex items-center justify-center gap-4 font-semibold text-lg border text-white border-gray-400 w-full rounded-md p-2.5 bg-black hover:bg-gray-800 cursor-pointer transition duration-150 mt-4"
           >
-            <FaApple className="text-xl" />
-            Continue with Apple
+            <FaDiscord className="text-xl" />
+            Continue with Discord
           </button>
 
           {/* OR divider */}
@@ -113,6 +179,8 @@ const SignUpPopUp = ({
             </label>
             <div className="relative">
               <input
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 className="w-full border-b p-2 focus:outline-none border-gray-600"
                 autoComplete="email"
                 type="email"
@@ -129,6 +197,8 @@ const SignUpPopUp = ({
             </label>
             <div className="relative">
               <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full border-b p-2 pr-10 focus:outline-none border-gray-600"
                 autoComplete="new-password"
                 type={showPassword ? "text" : "password"}
@@ -155,11 +225,13 @@ const SignUpPopUp = ({
             </label>
             <div className="relative">
               <input
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full border-b p-2 pr-10 focus:outline-none border-gray-600"
                 autoComplete="new-password"
                 type={showConfirm ? "text" : "password"}
                 id="confirmPassword"
-                name="confirmPassword"
+                name="password_confirmation"
               />
               <button
                 type="button"
@@ -171,11 +243,18 @@ const SignUpPopUp = ({
             </div>
           </div>
 
-          <button className="w-full bg-[#60A5FA] text-white rounded-md p-4 mt-4 hover:bg-[#60A5FA]/90 cursor-pointer font-semibold">
+          <button
+            type="submit"
+            className="w-full bg-[#60A5FA] text-white rounded-md p-4 mt-4 hover:bg-[#60A5FA]/90 cursor-pointer font-semibold"
+          >
             Create An Account
           </button>
 
-          <span className="mt-4 text-center text-sm text-gray-700">
+          {/* Error message */}
+          <span className="list-disc list-inside text-red-400 font-semibold mt-2 text-base">
+            {errors}
+          </span>
+          <span className="mt-4 text-center text-base text-gray-700">
             Already have an account?{" "}
             <button
               onClick={() => {

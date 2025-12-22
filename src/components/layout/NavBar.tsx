@@ -63,6 +63,7 @@ const NavBar = ({
 
     setIsProfileOpen(false);
   };
+
   return (
     <nav className="relative w-full z-20 bg-black/90">
       <NavigationMenu viewport={false} className="w-full">
@@ -153,7 +154,7 @@ const NavBar = ({
             {isProfileOpen && (
               <div className="absolute right-0 top-full flex flex-col gap-2 bg-gray-800 p-4 w-60 rounded-md font-semibold">
                 <span className="px-2 text-gray-400">
-                  {user?.user_metadata.full_name}
+                  {user?.user_metadata.full_name || "Movix User"}
                 </span>
 
                 <Link
@@ -184,8 +185,10 @@ const NavBar = ({
                 className="flex items-baseline cursor-pointer"
               >
                 <img
-                  className="rounded-full w-9 hover:opacity-95 duration-150"
-                  src={user.user_metadata?.avatar_url}
+                  className="rounded-full w-9 hover:opacity-95 duration-150 object-cover h-9"
+                  src={
+                    user.user_metadata?.avatar_url || "/default-profile-pic.jpg"
+                  }
                 />
                 <DropDownArrow className="-translate-x-3" />
               </div>

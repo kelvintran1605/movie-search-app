@@ -25,15 +25,10 @@ const FilterBar = ({
 
   const [sortByOrder, setSortByOrder] = useState("Descending");
 
-  const {
-    data: languages = [],
-    isError,
-    isLoading,
-  } = useGetAllLanguagesQuery();
+  const { data: languages = [] } = useGetAllLanguagesQuery();
 
   const [isSortByOpen, setSortByOpen] = useState(false);
   const [isLanguageOpen, setLanguageOpen] = useState(false);
-
   const [draftGenreIds, setDraftGenreIds] = useState<number[]>([]);
   const [sortBy, setSortBy] = useState(sortByOptions[0].value);
   const [language, setLanguage] = useState<string>("");

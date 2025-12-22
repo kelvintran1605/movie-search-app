@@ -9,13 +9,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Get session and user data
-    const getSupebaseSession = async () => {
+    const getSupabaseSession = async () => {
       const { data } = await supabase.auth.getSession();
       setSession(data.session);
       setUser(data.session?.user ?? null);
       setLoading(false);
     };
-    getSupebaseSession();
+    getSupabaseSession();
 
     // Register auth login logout listener for the website
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
