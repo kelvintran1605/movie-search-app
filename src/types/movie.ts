@@ -5,6 +5,7 @@ export type MovieSummary = {
   imgUrl: string;
   rating: number;
   overview?: string;
+  genres?: number[];
   mediaType?: "movie" | "tv";
 };
 

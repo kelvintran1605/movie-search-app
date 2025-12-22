@@ -16,15 +16,15 @@ const SignUpPopUp = ({
   const images = [
     {
       name: "Stranger Things",
-      url: "./stranger-things.jpg",
+      url: "/stranger-things.jpg",
     },
     {
       name: "Avengers",
-      url: "./avengers.jpg",
+      url: "/avengers.jpg",
     },
     {
       name: "Avatar 2",
-      url: "./avatar.jpg",
+      url: "/avatar.jpg",
     },
   ];
 
@@ -41,7 +41,11 @@ const SignUpPopUp = ({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 fade">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div
+        onClick={onToggleSignUp}
+        className="bg-black/40 fade absolute w-full h-full"
+      ></div>
       {/* Card */}
       <div className="relative flex items-stretch w-full sm:w-[90%] max-w-5xl h-dvh md:h-[90dvh] bg-white text-black rounded-md overflow-hidden">
         {/* Image */}

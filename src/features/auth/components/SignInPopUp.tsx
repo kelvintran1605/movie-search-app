@@ -2,7 +2,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaEyeSlash, FaEye } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { IoMdClose as CloseButton } from "react-icons/io";
-
+import { supabase } from "@/lib/supabase";
 const SignInPopUp = ({
   onToggleSignIn,
   onToggleSignUp,
@@ -10,20 +10,33 @@ const SignInPopUp = ({
   onToggleSignIn: () => void;
   onToggleSignUp: () => void;
 }) => {
+  // Function to handle google sign in
+  const handleGoogleSignIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:5173",
+      },
+    });
+
+    if (error) {
+      console.error(error.message);
+    }
+  };
   const [showPassword, setShowPassword] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const images = [
     {
       name: "Stranger Things",
-      url: "./stranger-things.jpg",
+      url: "/stranger-things.jpg",
     },
     {
       name: "Avengers",
-      url: "./avengers.jpg",
+      url: "/avengers.jpg",
     },
     {
       name: "Avatar 2",
-      url: "./avatar.jpg",
+      url: "/avatar.jpg",
     },
   ];
 
@@ -40,7 +53,11 @@ const SignInPopUp = ({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 fade">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div
+        onClick={onToggleSignIn}
+        className="bg-black/40 fade absolute w-full h-full"
+      ></div>
       {/* Card */}
       <div className="relative flex items-stretch w-full sm:w-[90%] max-w-5xl h-dvh md:h-[90dvh] bg-white text-black rounded-md overflow-hidden">
         {/* Image */}
@@ -71,6 +88,7 @@ const SignInPopUp = ({
 
           {/* Google button */}
           <button
+            onClick={handleGoogleSignIn}
             type="button"
             className="flex items-center justify-center gap-4 font-semibold text-lg border border-gray-400 w-full rounded-md p-2.5 hover:bg-gray-200 cursor-pointer transition duration-150"
           >

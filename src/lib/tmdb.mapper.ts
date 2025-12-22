@@ -19,7 +19,9 @@ export const buildImageUrl = (
   filePath?: string,
   size?: string
 ) => {
-  if (!filePath) return undefined;
+  const fallback = "/cinema.jpg";
+  if (!filePath) return fallback;
+
   const chosen = size || pickPosterSize(cfg);
   const base = cfg.images.secure_base_url || cfg.images.base_url || "";
   return `${base}${chosen}${filePath}`;
@@ -29,7 +31,7 @@ const getTitle = (w: TmdbMovieSummaryWire) => {
   return w.name ?? w.title ?? "";
 };
 
-const getYear = (date?: string) => (date ? date?.slice(0, 4) : undefined);
+const getYear = (date?: string) => (date ? date.slice(0, 4) : "N/A");
 
 export const mapTmdbSummary = (
   w: TmdbMovieSummaryWire,
@@ -41,15 +43,16 @@ export const mapTmdbSummary = (
   imgUrl: buildImageUrl(cfg, w.poster_path, "w342"),
   rating: w.vote_average,
   overview: w.overview,
+  genres: w.genre_ids,
   mediaType: w.media_type ?? "movie",
 });
 
-export const mapTmdbDetail = (
-  w: TmdbMovieDetailWire,
-  cfg: TmdbConfig
-): MovieDetail => ({
-  ...mapTmdbSummary(w, cfg),
-  genres: w.genres?.map((g) => ({ id: g.id, name: g.name })),
-  runtime: w.runtime,
-  spokenLanguages: w.spoken_languages?.map((l) => l.english_name) ?? [],
-});
+// export const mapTmdbDetail = (
+//   w: TmdbMovieDetailWire,
+//   cfg: TmdbConfig
+// ): MovieDetail => ({
+//   ...mapTmdbSummary(w, cfg),
+//   genres: w.genres?.map((g) => ({ id: g.id, name: g.name })),
+//   runtime: w.runtime,
+//   spokenLanguages: w.spoken_languages?.map((l) => l.english_name) ?? [],
+// });

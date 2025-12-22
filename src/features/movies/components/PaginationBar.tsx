@@ -37,13 +37,13 @@ const PaginationBar = ({
   const canNext = currentPage < totalPages;
 
   return (
-    <div className="flex items-stretch text-white border border-gray-400 rounded-xl overflow-hidden select-none mt-10 text-sm mb-10">
+    <div className="flex items-center text-white border border-gray-400 rounded-full overflow-hidden select-none mt-10 text-sm mb-10">
       {/* Previous */}
       <button
         disabled={!canPrev}
         onClick={() => canPrev && onPageChange(currentPage - 1)}
         className={`
-          flex items-center gap-2 px-4 py-2 font-semibold transition
+          h-10 inline-flex items-center gap-2 px-4 py-2 font-semibold transition
           ${
             canPrev
               ? "hover:bg-gray-700 cursor-pointer"
@@ -72,11 +72,11 @@ const PaginationBar = ({
             key={page}
             onClick={() => onPageChange(page)}
             className={`
-              px-4 py-2 border-x border-gray-400 transition
+              w-10 h-10 inline-flex items-center justify-center transition gap-4
               ${
                 isActive
-                  ? "bg-white text-black font-bold"
-                  : "hover:bg-[#60A5FA]/50 cursor-pointer"
+                  ? "bg-[#60A5FA]/80 text-white font-bold rounded-full cursor-pointer"
+                  : "hover:bg-[#60A5FA]/50 cursor-pointer rounded-full cursor-pointer"
               }
             `}
           >
@@ -90,7 +90,7 @@ const PaginationBar = ({
         disabled={!canNext}
         onClick={() => canNext && onPageChange(currentPage + 1)}
         className={`
-          flex items-center gap-2 px-4 py-2 font-semibold transition
+           h-10 inline-flex items-center gap-2 px-4 py-2 font-semibold transition
           ${
             canNext
               ? "hover:bg-gray-700 cursor-pointer"

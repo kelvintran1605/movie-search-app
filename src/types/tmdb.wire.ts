@@ -14,8 +14,9 @@ export type TmdbMovieSummaryWire = {
   release_date?: string;
   first_air_date?: string;
   poster_path?: string;
-  vote_average?: number;
+  vote_average: number;
   overview?: string;
+  genre_ids: number[];
   media_type?: "movie" | "tv";
 };
 
@@ -30,4 +31,10 @@ export type TmdbMovieDetailWire = TmdbMovieSummaryWire & {
   genres?: { id: number; name: string }[];
   runtime?: number;
   spoken_languages?: { english_name: string }[];
+};
+
+export type Language = {
+  iso_639_1: string;
+  english_name: string;
+  name: string;
 };

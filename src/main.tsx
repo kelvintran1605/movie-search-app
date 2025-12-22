@@ -4,10 +4,13 @@ import App from "./App.tsx";
 import { Provider } from "react-redux";
 import { store } from "./app/store.ts";
 import { BrowserRouter } from "react-router-dom";
+import AuthProvider from "./context/AuthProvider.tsx";
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </Provider>
 );
