@@ -10,13 +10,12 @@ type MovieCardProps = {
 
 const MovieCard = ({ name, date, rating, imgURL }: MovieCardProps) => {
   const percent = rating * 10;
-
   return (
-    <div className="w-[250px] h-[440px] rounded-2xl shadow-xl bg-white/10 hover:border-2 duration-150 hover:border-white backdrop-blur-lg cursor-pointer overflow-hidden">
+    <div className="w-[220px] h-[390px] rounded-2xl shadow-xl bg-white/10 hover:border-2 duration-150 hover:border-white backdrop-blur-lg cursor-pointer overflow-hidden">
       {/* IMAGE */}
       <div className="relative overflow-hidden">
         <img
-          className="hover:scale-105 transition duration-250 h-[350px] w-full object-cover z-0"
+          className="hover:scale-105 transition duration-250 h-[300px] w-full object-cover z-0"
           src={imgURL}
           alt={name}
         />
@@ -26,7 +25,7 @@ const MovieCard = ({ name, date, rating, imgURL }: MovieCardProps) => {
           <div className="p-0.5 bg-black/60 backdrop-blur-sm rounded-full">
             <CircularProgressbar
               value={percent}
-              text={rating.toFixed(1)}
+              text={rating === 0 ? "NR" : rating.toFixed(1)}
               strokeWidth={10}
               styles={buildStyles({
                 textColor: "#fff",

@@ -132,3 +132,11 @@
     opacity: 1;
   }
 }
+
+.embla {
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+  gap: 20px;
+}

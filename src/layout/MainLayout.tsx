@@ -24,7 +24,7 @@ const MainLayout = () => {
     setSignInOpen(!isSignInOpen);
   };
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header
         onToggleSignIn={handleToggleSignIn}
         onToggleSignUp={handleToggleSignUp}
@@ -59,11 +59,11 @@ const MainLayout = () => {
           onToggleSignIn={handleToggleSignIn}
         />
       )}
-      <main>
+      <main className="flex-1 bg-[#0D0D0D]">
         <Outlet />
       </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

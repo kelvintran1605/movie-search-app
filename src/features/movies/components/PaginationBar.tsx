@@ -37,7 +37,7 @@ const PaginationBar = ({
   const canNext = currentPage < totalPages;
 
   return (
-    <div className="flex items-center text-white border border-gray-400 rounded-full overflow-hidden select-none mt-10 text-sm mb-10">
+    <div className="flex items-center justify-center text-white border border-gray-400 rounded-full overflow-hidden select-none mt-10 text-sm mb-10">
       {/* Previous */}
       <button
         disabled={!canPrev}

@@ -1,8 +1,15 @@
-import type { MovieDetail, MovieSummary } from "../types/movie";
+import type {
+  MovieDetail,
+  MovieSummary,
+  TmdbCredit,
+  TmdbMovieReview,
+} from "../types/movie";
 import type {
   TmdbConfig,
+  TmdbCreditWire,
   TmdbMovieDetailWire,
   TmdbMovieSummaryWire,
+  TmdbReviewWire,
 } from "../types/tmdb.wire";
 
 // Function to pick poster size
@@ -47,12 +54,72 @@ export const mapTmdbSummary = (
   mediaType: w.media_type ?? "movie",
 });
 
-// export const mapTmdbDetail = (
-//   w: TmdbMovieDetailWire,
-//   cfg: TmdbConfig
-// ): MovieDetail => ({
-//   ...mapTmdbSummary(w, cfg),
-//   genres: w.genres?.map((g) => ({ id: g.id, name: g.name })),
-//   runtime: w.runtime,
-//   spokenLanguages: w.spoken_languages?.map((l) => l.english_name) ?? [],
-// });
+export const mapTmdbDetail = (
+  w: TmdbMovieDetailWire,
+  cfg: TmdbConfig
+): MovieDetail => {
+  return {
+    id: w.id,
+    title: w.title,
+    year: getYear(w.release_date),
+    imgUrl: buildImageUrl(cfg, w.poster_path, "w342"),
+    backdropUrl: buildImageUrl(cfg, w.backdrop_path, "w1280"),
+    rating: w.vote_average,
+    overview: w.overview,
+    genres: w.genres,
+    duration: w.runtime,
+    spokenLanguage: w.spoken_languages,
+    budget: w.budget,
+    revenue: w.revenue,
+    status: w.status,
+  };
+};
+
+export const mapTmdbCredit = (
+  w: TmdbCreditWire,
+  cfg: TmdbConfig
+): TmdbCredit => {
+  const cast = w.cast.map((e) => ({
+    id: e.id,
+    name: e.name,
+    character: e.character,
+    profileUrl: buildImageUrl(cfg, e.profile_path ?? undefined, "w185"),
+  }));
+
+  const directorWire = w.crew.find((c) => c.job === "Director");
+
+  const director = directorWire
+    ? {
+        id: directorWire.id,
+        name: directorWire.name,
+        job: directorWire.job,
+        profileUrl: buildImageUrl(
+          cfg,
+          directorWire.profile_path ?? undefined,
+          "w185"
+        ),
+      }
+    : undefined;
+
+  return {
+    cast,
+    director,
+  };
+};
+
+export const mapTmdbReview = (
+  w: TmdbReviewWire,
+  cfg: TmdbConfig
+): TmdbMovieReview => {
+  return {
+    name: w.author_details.name,
+    profileUrl: buildImageUrl(cfg, w.author_details.avatar_path, "w92"),
+    rating: w.author_details.rating,
+    content: w.content,
+    createdTime: new Date(w.created_at).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+  };
+};

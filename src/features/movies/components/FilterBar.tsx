@@ -1,43 +1,94 @@
 import { MdKeyboardArrowDown as ArrowDown } from "react-icons/md";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as Slider from "@radix-ui/react-slider";
-import type { Filters } from "../pages/PopularMovies";
+import type { Filters } from "@/types/movie";
 import { useGetAllLanguagesQuery } from "@/services/moviesApiSlice";
 import {
   HiSortAscending as AscendingIcon,
   HiSortDescending as DescendingIcon,
 } from "react-icons/hi";
+import { useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 type GenreOption = { name: string; value: number };
 
-const FilterBar = ({
-  movieGenres,
-  onApply,
-}: {
-  movieGenres: GenreOption[];
-  onApply: (filters: Filters) => void;
-}) => {
+const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
   const sortByOptions = [
     { name: "Popularity", value: "popularity" },
     { name: "Rating", value: "vote_average" },
     { name: "Release date", value: "primary_release_date" },
   ];
-
+  const location = useLocation();
   const [sortByOrder, setSortByOrder] = useState("Descending");
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: languages = [] } = useGetAllLanguagesQuery();
 
   const [isSortByOpen, setSortByOpen] = useState(false);
   const [isLanguageOpen, setLanguageOpen] = useState(false);
-  const [draftGenreIds, setDraftGenreIds] = useState<number[]>([]);
+
+  const [draftGenreIds, setDraftGenreIds] = useState<number[]>(
+    searchParams.get("genreIds")?.split(",").map(Number) || []
+  );
   const [sortBy, setSortBy] = useState(sortByOptions[0].value);
-  const [language, setLanguage] = useState<string>("");
+  const [language, setLanguage] = useState<string>(
+    searchParams.get("language") || ""
+  );
   const [yearRange, setYearRange] = useState<[number, number]>([2000, 2025]);
+
+  // Sync URL params -> local state whenever the URL changes (back/forward, external setSearchParams, etc.)
+  useEffect(() => {
+    // genreIds=28,12,16
+    setDraftGenreIds(
+      searchParams
+        .get("genreIds")
+        ?.split(",")
+        .map(Number)
+        .filter(Number.isFinite) || []
+    );
+
+    // language=en
+    setLanguage(searchParams.get("language") || "");
+
+    // year=2000-2025
+    const year = searchParams.get("year");
+    if (year) {
+      const [minY, maxY] = year.split("-").map(Number);
+      if (Number.isFinite(minY) && Number.isFinite(maxY)) {
+        setYearRange([minY, maxY]);
+      }
+    } else {
+      // If year is not in URL, reset to default (optional but usually expected)
+      setYearRange([2000, 2025]);
+    }
+
+    // sortBy=popularity.asc | popularity.desc
+    const sort = searchParams.get("sortBy");
+    if (sort) {
+      const [field, dir] = sort.split(".");
+      if (field) setSortBy(field);
+      setSortByOrder(dir === "asc" ? "Ascending" : "Descending");
+    } else {
+      // If sortBy is not in URL, reset to default
+      setSortBy(sortByOptions[0].value);
+      setSortByOrder("Descending");
+    }
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleGenre = (id: number) => {
     setDraftGenreIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
+  };
+
+  const filtersToSearchParams = (filters: Filters) => ({
+    genreIds: filters.genreIds.join(","),
+    sortBy: filters.sortBy,
+    language: filters.language,
+    year: `${filters.yearRange[0]}-${filters.yearRange[1]}`,
+  });
+
+  const handleApplyFilter = (searchParams: Record<string, string>) => {
+    setSearchParams(searchParams);
   };
 
   const activeFiltersCount =
@@ -76,7 +127,9 @@ const FilterBar = ({
               "Popularity") + ` (${sortByOrder})`}
           </span>
           <ArrowDown
-            className={`duration-250 ${isSortByOpen ? "rotate-180" : "rotate-0"}`}
+            className={`duration-250 ${
+              isSortByOpen ? "rotate-180" : "rotate-0"
+            }`}
           />
 
           <div
@@ -158,36 +211,44 @@ const FilterBar = ({
 
         <div>Release Year</div>
         <div>
-          <Slider.Root
-            value={yearRange}
-            onValueChange={(v) => setYearRange(v as [number, number])}
-            className="relative flex items-center select-none touch-none w-full h-5"
-            defaultValue={[2000, 2025]}
-            min={1950}
-            max={2025}
-            step={1}
-          >
-            <Slider.Track className="bg-gray-700 relative grow rounded-full h-1">
-              <Slider.Range className="absolute bg-[#60A5FA] rounded-full h-full" />
-            </Slider.Track>
-            <Slider.Thumb className="block w-4 h-4 bg-white rounded-full shadow hover:scale-110 transition" />
-            <Slider.Thumb className="block w-4 h-4 bg-white rounded-full shadow hover:scale-110 transition" />
-          </Slider.Root>
+          {location.pathname === "/movies/now-playing" ? (
+            <div className="font-bold text-cyan-500">2025</div>
+          ) : (
+            <div>
+              <Slider.Root
+                value={yearRange}
+                onValueChange={(v) => setYearRange(v as [number, number])}
+                className="relative flex items-center select-none touch-none w-full h-5"
+                defaultValue={[2000, 2025]}
+                min={1950}
+                max={2025}
+                step={1}
+              >
+                <Slider.Track className="bg-gray-700 relative grow rounded-full h-1">
+                  <Slider.Range className="absolute bg-[#60A5FA] rounded-full h-full" />
+                </Slider.Track>
+                <Slider.Thumb className="block w-4 h-4 bg-white rounded-full shadow hover:scale-110 transition" />
+                <Slider.Thumb className="block w-4 h-4 bg-white rounded-full shadow hover:scale-110 transition" />
+              </Slider.Root>
 
-          <div className="text-xs text-gray-200 mt-1 flex justify-between">
-            <span>{yearRange[0]}</span>
-            <span>{yearRange[1]}</span>
-          </div>
+              <div className="text-xs text-gray-200 mt-1 flex justify-between">
+                <span>{yearRange[0]}</span>
+                <span>{yearRange[1]}</span>
+              </div>
+            </div>
+          )}
 
           <button
             onClick={() =>
-              onApply({
-                genreIds: draftGenreIds,
-                sortBy:
-                  sortBy + (sortByOrder === "Ascending" ? ".asc" : ".desc"),
-                language,
-                yearRange,
-              })
+              handleApplyFilter(
+                filtersToSearchParams({
+                  genreIds: draftGenreIds,
+                  sortBy:
+                    sortBy + (sortByOrder === "Ascending" ? ".asc" : ".desc"),
+                  language,
+                  yearRange,
+                })
+              )
             }
             className="bg-[#60A5FA] w-full p-2 rounded-3xl mt-10 cursor-pointer hover:opacity-90 hover:scale-105 duration-150"
           >

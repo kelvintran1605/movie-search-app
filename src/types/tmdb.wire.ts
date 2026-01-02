@@ -27,14 +27,61 @@ export type TmdbSearchResponse = {
   total_results?: number;
 };
 
-export type TmdbMovieDetailWire = TmdbMovieSummaryWire & {
-  genres?: { id: number; name: string }[];
-  runtime?: number;
-  spoken_languages?: { english_name: string }[];
+type MovieDetailGenres = {
+  id: number;
+  name: string;
+};
+export type TmdbMovieDetailWire = {
+  id: number;
+  title: string;
+  genres: MovieDetailGenres[];
+  release_date: string;
+  runtime: number;
+  overview: string;
+  vote_average: number;
+  status: string;
+  spoken_languages: Language[];
+  budget: number;
+  revenue: number;
+  poster_path?: string;
+  backdrop_path?: string;
 };
 
 export type Language = {
   iso_639_1: string;
   english_name: string;
   name: string;
+};
+
+export type TmdbCreditWire = {
+  cast: {
+    id: number;
+    name: string;
+    profile_path?: string | null;
+    character: string;
+  }[];
+  crew: {
+    id: number;
+    name: string;
+    profile_path?: string | null;
+    job: string;
+  }[];
+};
+
+export type TmdbReviewWire = {
+  author_details: {
+    name: string;
+    avatar_path: string;
+    rating: number;
+  };
+  content: string;
+  created_at: string;
+};
+
+export type TmdbReviewResponse = {
+  id: number;
+  page: number;
+  results: TmdbReviewWire[];
+  total_pages: number;
+  total_results: number;
 };

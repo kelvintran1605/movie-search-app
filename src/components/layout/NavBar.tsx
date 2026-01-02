@@ -48,7 +48,6 @@ const NavBar = ({
     "w-full block px-3 py-2 rounded-lg text-black/90 hover:text-[#60A5FA] hover:bg-gray-100 cursor-pointer font-bold transition";
 
   const { user, loading } = useAuth();
-
   if (loading) {
     return null;
   }
@@ -165,6 +164,7 @@ const NavBar = ({
                 </Link>
 
                 <Link
+                  onClick={() => setIsProfileOpen(false)}
                   className="hover:bg-gray-600 duration-150 px-2 flex items-center gap-3 cursor-pointer"
                   to="/watchlist"
                 >
