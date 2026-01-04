@@ -1,5 +1,5 @@
 import { CiMail as MailIcon } from "react-icons/ci";
-import { FcGoogle as GoogleIcon } from "react-icons/fc";
+import { CiLink as LinkIcon } from "react-icons/ci";
 import { LuKey as KeyIcon } from "react-icons/lu";
 import { BsExclamationCircle as ExclamationIcon } from "react-icons/bs";
 import { CiDark as DarkIcon, CiLight as LightIcon } from "react-icons/ci";
@@ -11,25 +11,24 @@ import { useEffect, useState } from "react";
 import SetPasswordPopUp from "../components/SetPasswordPopup";
 import { supabase } from "@/lib/supabase";
 import ChangePasswordPopup from "../components/ChangePasswordPopup";
+import AvatarPicker from "../components/AvatarPicker";
 
 const AccountSettings = () => {
   const { user } = useAuth();
   const [hasPassword, setHasPassword] = useState(false);
   const [isSetPasswordOpen, setIsSetPasswordOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
 
-  // Temporary function to delete users in the row
-  const deleteUser = async () => {
-    const { data, error } = await supabase.auth.admin.deleteUser(
-      "75f3c52e-99a4-43ca-8883-1410eb43caf2"
-    );
-    if (error) {
-      console.log("Users deleted error :" + error.message);
-    }
+  const providers = user?.app_metadata?.providers ?? [];
+
+  // Function to capitalize words
+  const capitalize = ([first, ...rest]: string): string => {
+    return first.toUpperCase() + rest.join("");
   };
   useEffect(() => {
     // Fetch the current user's profile row to determine if they already have a password
-    // IMPORTANT: Always filter by user.id, otherwise you may read the wrong row or get null due to RLS.
     if (!user?.id) return;
 
     const getHasPassword = async () => {
@@ -49,16 +48,42 @@ const AccountSettings = () => {
       setHasPassword(!!data?.has_password);
     };
 
+    const getAvatarUrl = async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("profile_image")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.log(error.message);
+        return;
+      }
+      console.log(data);
+      setAvatarUrl(data.profile_image);
+    };
+
+    getAvatarUrl();
     getHasPassword();
   }, [user?.id]);
 
   return (
     <div className="flex flex-col gap-4 text-white p-20 px-32 items-center relative">
-      {(isSetPasswordOpen || isChangePasswordOpen) && (
+      {/* Change Avatar */}
+      {isAvatarPickerOpen && (
+        <AvatarPicker
+          avatarUrl={avatarUrl}
+          onSelectAvatar={setAvatarUrl}
+          onToggleAvatarPicker={setIsAvatarPickerOpen}
+        />
+      )}
+
+      {(isSetPasswordOpen || isChangePasswordOpen || isAvatarPickerOpen) && (
         <div
           onClick={() => {
             setIsSetPasswordOpen(false);
             setIsChangePasswordOpen(false);
+            setIsAvatarPickerOpen(false);
           }}
           className="absolute inset-0 bg-black/80"
         />
@@ -73,15 +98,16 @@ const AccountSettings = () => {
         {/* Profile section */}
         <div className="flex flex-col p-8 gap-2 bg-[#1A1A1A] w-full mt-8 rounded-xl">
           <h2 className="font-bold text-xl">Profile</h2>
-          <div className="text-gray-400">
+          <div className="text-gray-400 mb-8">
             Personal information linked to your account
           </div>
 
           <div className="flex items-start gap-4">
             {/* Profile image */}
             <img
-              className="w-20 h-20 object-cover rounded-full"
-              src={user?.user_metadata?.avatar_url || "/default-avatar.png"}
+              onClick={() => setIsAvatarPickerOpen(true)}
+              className="w-20 h-20 object-cover rounded-full cursor-pointer hover:ring-slate-600 hover:scale-105 duration-150 hover:ring-2"
+              src={avatarUrl || "/default-avatar.png"}
               alt="Avatar"
             />
 
@@ -94,9 +120,6 @@ const AccountSettings = () => {
               <div className="flex items-center gap-2">
                 <MailIcon /> {user?.email}
               </div>
-
-              <h3 className="font-bold text-gray-400 mt-5">Authentication</h3>
-              <div>Signed in with {user?.app_metadata?.provider}</div>
             </div>
           </div>
         </div>
@@ -108,27 +131,35 @@ const AccountSettings = () => {
             Manage how you sign in to your account
           </div>
 
-          <div className="flex items-center gap-4 mt-4 border-b border-gray-800 pb-7">
+          <div className="flex items-start gap-4 mt-4 border-b border-gray-800 pb-7">
             <div className="bg-blue-500/30 text-2xl p-2 rounded-xl">
-              <GoogleIcon />
+              <LinkIcon className="text-green-400" />
             </div>
 
             <div className="flex flex-col">
-              <div>Google</div>
-              <div className="text-gray-400">
-                Sign in quickly using your Google account
-              </div>
+              <div>Connected via</div>
+              <ul className="mt-1">
+                {providers?.map((provider) => {
+                  return (
+                    <li className="text-gray-400 list-disc ml-4" key={provider}>
+                      {capitalize(provider)}
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 mt-4 border-b border-gray-800 pb-7">
-            <div className="bg-blue-500/30 text-2xl p-2 rounded-xl">
-              <KeyIcon className="text-yellow-600" />
-            </div>
+          <div className="flex items-center justify-between gap-4 mt-4 border-b border-gray-800 pb-7">
+            <div className="flex items-center gap-4">
+              <div className="bg-blue-500/30 text-2xl p-2 rounded-xl">
+                <KeyIcon className="text-yellow-600" />
+              </div>
 
-            <div className="flex flex-col">
-              <div>Password</div>
-              <div className="text-gray-400">Add/Change Password</div>
+              <div className="flex flex-col">
+                <div>Password</div>
+                <div className="text-gray-400">Add/Change Password</div>
+              </div>
             </div>
 
             {/* If user doesn't have email provider AND has no password yet => show Set Password */}
@@ -143,14 +174,17 @@ const AccountSettings = () => {
             ) : (
               <button
                 onClick={() => setIsChangePasswordOpen(true)}
-                className="w-32 bg-white text-black rounded-md p-1 mt-4 cursor-pointer hover:bg-gray-300 duration-150"
+                className="w-32 bg-[#1A1A1A]/20 text-white rounded-md p-1 ring ring-gray-600 mt-4 cursor-pointer hover:bg-gray-700 duration-150"
               >
                 Change password
               </button>
             )}
 
             {isSetPasswordOpen && (
-              <SetPasswordPopUp onTogglePassword={setIsSetPasswordOpen} />
+              <SetPasswordPopUp
+                onToggleHasPassword={setHasPassword}
+                onTogglePassword={setIsSetPasswordOpen}
+              />
             )}
 
             {isChangePasswordOpen && (
@@ -201,7 +235,6 @@ const AccountSettings = () => {
           </div>
 
           <div className="text-gray-400 mt-4">Language</div>
-          <button onClick={deleteUser}>Delete User</button>
           <div className="flex items-center justify-between gap-2 text-base border border-gray-500 p-3 rounded-md">
             <div className="flex items-center gap-4">
               <LanguageIcon className="text-xl text-gray-400" />

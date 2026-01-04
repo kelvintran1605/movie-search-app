@@ -6,11 +6,12 @@ import { useAuth } from "@/context/AuthContext";
 
 const SetPasswordPopup = ({
   onTogglePassword,
+  onToggleHasPassword,
 }: {
   onTogglePassword: (state: boolean) => void;
+  onToggleHasPassword: (state: boolean) => void;
 }) => {
   const { user } = useAuth();
-
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const [isPasswordConfirmShow, setIsPasswordConfirmShow] = useState(false);
 
@@ -48,6 +49,7 @@ const SetPasswordPopup = ({
     }
 
     onTogglePassword(false);
+    onToggleHasPassword(true);
   };
 
   return (
