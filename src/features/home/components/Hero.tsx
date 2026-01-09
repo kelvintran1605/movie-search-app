@@ -1,6 +1,6 @@
 const Hero = () => {
   return (
-    <div className="absolute inset-0 w-full h-[700px] z-10 flex">
+    <div className="relative inset-0 w-full h-[700px] z-10 flex">
       <div className="w-full h-full relative">
         <img
           className="w-full h-full object-cover"
@@ -24,15 +24,15 @@ const Hero = () => {
           </p>
           <button
             className="
-              px-2 py-2 mt-4
-              bg-linear-to-r from-[#3B82F6] to-[#60A5FA]
-              text-white font-semibold
-              rounded-full
-              shadow-md shadow-blue-500/20
-              transition-all duration-300
-              hover:shadow-lg hover:shadow-blue-400/30
-              hover:scale-[1.04]
-              cursor-pointer w-40"
+                px-2 py-2 mt-4
+                bg-linear-to-r from-[#3B82F6] to-[#60A5FA]
+                text-white font-semibold
+                rounded-full
+                shadow-md shadow-blue-500/20
+                transition-all duration-300
+                hover:shadow-lg hover:shadow-blue-400/30
+                hover:scale-[1.04]
+                cursor-pointer w-40"
           >
             Search Now
           </button>

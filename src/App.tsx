@@ -7,6 +7,7 @@ import MovieDetail from "./features/movies/pages/MovieDetail";
 import WatchList from "./features/movies/pages/WatchList";
 import NowPlaying from "./features/movies/pages/NowPlaying";
 import AccountSettings from "./features/account/pages/AccountSettings";
+import MovieSearch from "./features/movies/pages/MovieSearch";
 function App() {
   return (
     <Routes>
@@ -17,6 +18,7 @@ function App() {
         <Route path="movie/:id" element={<MovieDetail />} />
         <Route path="watchlist" element={<WatchList />} />
         <Route path="account-settings" element={<AccountSettings />} />
+        <Route path="search" element={<MovieSearch />} />
       </Route>
     </Routes>
   );

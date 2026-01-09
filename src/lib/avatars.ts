@@ -23,6 +23,23 @@ export const seeds = [
   "william",
   "zoe",
   "noah",
+
+  "aaron",
+  "blake",
+  "carla",
+  "daniel",
+  "emily",
+  "felix",
+  "grace",
+  "henry",
+  "ivy",
+  "jack",
+  "leo",
+  "maya",
+  "oscar",
+  "rachel",
+  "sophia",
+  "tom",
 ];
 
 export const avatars = seeds.map(

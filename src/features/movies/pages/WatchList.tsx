@@ -28,12 +28,14 @@ const WatchList = () => {
       case "date.asc":
         return arr.sort(
           (a, b) =>
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            new Date(a.created_at ?? "").getTime() -
+            new Date(b.created_at ?? "").getTime()
         );
       case "date.desc":
         return arr.sort(
           (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            new Date(b.created_at ?? "").getTime() -
+            new Date(a.created_at ?? "").getTime()
         );
       case "title.asc":
         return arr.sort((a, b) =>
@@ -59,24 +61,29 @@ const WatchList = () => {
   }, []);
 
   return (
-    <div className="w-full h-full p-12 text-white flex flex-col justify-center gap-6">
-      <h1 className="text-white font-bold text-2xl">My Watchlist</h1>
+    <div className="w-full h-full p-12 flex flex-col justify-center gap-6 text-slate-900 dark:text-white">
+      <h1 className="font-bold text-2xl">My Watchlist</h1>
 
-      <div>{sortedMovies.length} Movies saved</div>
+      <div className="text-slate-600 dark:text-white/70">
+        {sortedMovies.length} Movies saved
+      </div>
 
       <div
         ref={ref}
         onClick={() => setIsSortByOpen((prev) => !prev)}
-        className="bg-white group text-black w-fit text-center p-2 rounded-md flex items-center justify-center gap-2 hover:bg-gray-300
-        cursor-pointer duration-450 relative"
+        className="group w-fit text-center px-3 py-2 rounded-xl flex items-center justify-center gap-2 cursor-pointer relative select-none
+  bg-slate-100 text-slate-900 border border-slate-200 hover:bg-slate-200 hover:border-slate-300
+  dark:bg-white/10 dark:text-white dark:border-white/10 dark:hover:bg-white/15"
       >
         <span>{sortByLabel}</span>
-        <DropdownIcon className="text-md" />
+        <DropdownIcon className="text-md opacity-80" />
 
         <div
           className={`${
             isSortByOpen ? "flex" : "hidden"
-          } duration-450 absolute w-60 bg-white left-0 top-14 z-10 rounded-xl font-medium flex-col overflow-hidden`}
+          } absolute w-64 left-0 top-14 z-10 rounded-2xl font-medium flex-col overflow-hidden
+    bg-slate-50 border border-slate-200 shadow-xl
+    dark:bg-[#0D0D0D] dark:border-white/10 dark:shadow-none`}
           onClick={(e) => e.stopPropagation()}
         >
           {sortByOptions.map((option) => (
@@ -86,7 +93,9 @@ const WatchList = () => {
                 setSortByValue(option.value);
                 setIsSortByOpen(false);
               }}
-              className="text-start hover:bg-[#60A5FA]/40 duration-150 py-2 px-4"
+              className="text-start py-2.5 px-4 duration-150
+        text-slate-800 hover:bg-slate-200/70
+        dark:text-white dark:hover:bg-white/10"
             >
               {option.name}
             </div>

@@ -9,11 +9,13 @@ import type {
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import tmdbCf from "../samples/tmdb-config.json";
 import {
+  mapSearchMovie,
   mapTmdbCredit,
   mapTmdbDetail,
   mapTmdbReview,
   mapTmdbSummary,
 } from "@/lib/tmdb.mapper";
+import type { RawSearchMovie, SearchMovie, SearchOption } from "@/types/movie";
 
 const config = tmdbCf as TmdbConfig;
 
@@ -97,6 +99,25 @@ export const moviesApiSlice = createApi({
         };
       },
     }),
+
+    // Search movie
+    getSearchMovie: build.query({
+      query: ({ query, option }: { query: string; option: SearchOption }) => {
+        return `/search/${option}?query=${query}&api_key=${import.meta.env.VITE_TMDB_KEY}`;
+      },
+      transformResponse: (
+        response,
+        meta,
+        { option, query }: { option: SearchOption; query: string }
+      ) => {
+        switch (option) {
+          case "movie":
+            return response.results.map((result: RawSearchMovie) =>
+              mapSearchMovie(result, config)
+            );
+        }
+      },
+    }),
   }),
 });
 
@@ -107,4 +128,5 @@ export const {
   useGetCreditQuery,
   useGetReviewsQuery,
   useGetNowPlayingQuery,
+  useGetSearchMovieQuery,
 } = moviesApiSlice;

@@ -5,39 +5,48 @@ import { useState } from "react";
 import SideBar from "@/components/layout/SideBar";
 import SignUpPopUp from "@/features/auth/components/SignUpPopUp";
 import SignInPopUp from "@/features/auth/components/SignInPopUp";
+import { Toaster } from "react-hot-toast";
+
 const MainLayout = () => {
-  // Sidebar state
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [isSignUpOpen, setSignUpOpen] = useState(false);
   const [isSignInOpen, setSignInOpen] = useState(false);
 
-  // Toggle Sidebar
-  const handleToggleSideBar = () => {
-    setIsSideBarOpen(!isSideBarOpen);
-  };
-  // Toggle Sign up popup
-  const handleToggleSignUp = () => {
-    setSignUpOpen(!isSignUpOpen);
-  };
-  // Toggle Sign In popup
-  const handleToggleSignIn = () => {
-    setSignInOpen(!isSignInOpen);
-  };
+  const handleToggleSideBar = () => setIsSideBarOpen((prev) => !prev);
+  const handleToggleSignUp = () => setSignUpOpen((prev) => !prev);
+  const handleToggleSignIn = () => setSignInOpen((prev) => !prev);
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white text-slate-900 dark:bg-[#0D0D0D] dark:text-white">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#1a1a1a",
+            color: "#fff",
+          },
+          success: {
+            iconTheme: {
+              primary: "#22c55e",
+              secondary: "#000",
+            },
+          },
+        }}
+      />
+
       <Header
         onToggleSignIn={handleToggleSignIn}
         onToggleSignUp={handleToggleSignUp}
         onToggleSideBar={handleToggleSideBar}
       />
-      {/* Conditional Rendering Sidebar */}
+
       {isSideBarOpen && (
         <>
-          {/* Overlay */}
           <div
             onClick={handleToggleSideBar}
-            className="fixed z-50 inset-0 bg-black/50"
-          ></div>
+            className="fixed z-50 inset-0 bg-black/50 dark:bg-black/60"
+          />
           <SideBar
             onToggleSignUp={handleToggleSignUp}
             onToggleSideBar={handleToggleSideBar}
@@ -46,22 +55,24 @@ const MainLayout = () => {
         </>
       )}
 
-      {/* Sign Up Popup */}
       {isSignUpOpen && (
         <SignUpPopUp
           onToggleSignIn={handleToggleSignIn}
           onToggleSignUp={handleToggleSignUp}
         />
       )}
+
       {isSignInOpen && (
         <SignInPopUp
           onToggleSignUp={handleToggleSignUp}
           onToggleSignIn={handleToggleSignIn}
         />
       )}
-      <main className="flex-1 bg-[#0D0D0D]">
+
+      <main className="flex-1 bg-slate-50 dark:bg-[#0D0D0D]">
         <Outlet />
       </main>
+
       <Footer />
     </div>
   );

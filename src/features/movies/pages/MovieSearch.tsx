@@ -1,9 +1,5 @@
 const MovieSearch = () => {
-    return (
-        <div>
-            
-        </div>
-    );
-}
- 
+  return <div></div>;
+};
+
 export default MovieSearch;

@@ -1,6 +1,8 @@
 import type {
   MovieDetail,
   MovieSummary,
+  RawSearchMovie,
+  SearchMovie,
   TmdbCredit,
   TmdbMovieReview,
 } from "../types/movie";
@@ -11,6 +13,7 @@ import type {
   TmdbMovieSummaryWire,
   TmdbReviewWire,
 } from "../types/tmdb.wire";
+import { genres } from "./data";
 
 // Function to pick poster size
 export const pickPosterSize = (cfg: TmdbConfig, fallback: string = "w342") => {
@@ -66,7 +69,7 @@ export const mapTmdbDetail = (
     backdropUrl: buildImageUrl(cfg, w.backdrop_path, "w1280"),
     rating: w.vote_average,
     overview: w.overview,
-    genres: w.genres,
+    genres: w.genres.map((g) => g.id),
     duration: w.runtime,
     spokenLanguage: w.spoken_languages,
     budget: w.budget,
@@ -122,4 +125,39 @@ export const mapTmdbReview = (
       day: "numeric",
     }),
   };
+};
+
+const DEPARTMENT_TO_JOB: Record<string, string> = {
+  Acting: "Actor",
+  Directing: "Director",
+  Writing: "Writer",
+  Production: "Producer",
+  Sound: "Sound Designer",
+  Camera: "Cinematographer",
+  Art: "Art Director",
+  Editing: "Editor",
+  Costume: "Costume Designer",
+  VisualEffects: "VFX Artist",
+};
+
+export const getJobTitleFromDepartment = (department?: string | null) => {
+  if (!department) return "Unknown";
+  return DEPARTMENT_TO_JOB[department] ?? department;
+};
+
+export const mapSearchMovie = (
+  rawSearchMovie: RawSearchMovie,
+  config: TmdbConfig
+): SearchMovie => {
+  return {
+    title: rawSearchMovie.title,
+    id: rawSearchMovie.id,
+    genres: rawSearchMovie.genre_ids,
+    year: getYear(rawSearchMovie.release_date),
+    url: buildImageUrl(config, rawSearchMovie.poster_path, "w92"),
+  };
+};
+
+export const mapMovieGenres = (genreId: number) => {
+  return genres.find((genre) => genre.id === genreId)?.name;
 };

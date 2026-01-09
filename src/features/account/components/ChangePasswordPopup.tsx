@@ -4,6 +4,7 @@ import { BsExclamationCircle as ExclamationIcon } from "react-icons/bs";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { IoCloseSharp as CloseIcon } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 const ChangePasswordPopup = ({
   onTogglePassword,
@@ -90,7 +91,7 @@ const ChangePasswordPopup = ({
         setPasswordError(profileError.message);
         return;
       }
-
+      toast.success("Updated password successfully");
       onTogglePassword(false);
     } finally {
       setIsSaving(false);

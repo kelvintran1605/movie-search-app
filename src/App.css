@@ -154,3 +154,7 @@
   display: flex;
   gap: 20px;
 }
+
+// Setup tailwindcss dark mode
+@custom-variant dark (&:where(.dark, .dark *));
+ 

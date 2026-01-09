@@ -12,8 +12,9 @@ import {
 } from "../ui/navigation-menu.tsx";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdArrowDropdownCircle as DropDownArrow } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase.ts";
+
 const NavBar = ({
   onToggleSideBar,
   onToggleSignUp,
@@ -25,15 +26,22 @@ const NavBar = ({
 }) => {
   const triggerClass = `
     bg-transparent
-    hover:bg-white
-    data-[state=open]:bg-white
+    hover:bg-gray-200
+    dark:hover:bg-white
+    data-[state=open]:bg-gray-200
+    dark:data-[state=open]:bg-white
 
-    text-white
+    text-black
+    dark:text-white
     hover:text-black
+    dark:hover:text-black
     data-[state=open]:text-black
+    dark:data-[state=open]:text-black
 
-    focus:bg-white
+    focus:bg-gray-200
+    dark:focus:bg-white
     focus:text-black
+    dark:focus:text-black
 
     font-semibold
     text-base
@@ -45,14 +53,13 @@ const NavBar = ({
   `;
 
   const dropLink =
-    "w-full block px-3 py-2 rounded-lg text-black/90 hover:text-[#60A5FA] hover:bg-gray-100 cursor-pointer font-bold transition";
+    "w-full block px-3 py-2 rounded-lg text-black/90 dark:text-white/90 hover:text-[#60A5FA] hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer font-bold transition";
 
-  const { user, loading } = useAuth();
+  const { user, loading, avatarUrl } = useAuth();
   if (loading) {
     return null;
   }
 
-  // Drop down state for user profile
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -62,9 +69,20 @@ const NavBar = ({
 
     setIsProfileOpen(false);
   };
+  const profileRef = useRef<HTMLDivElement>(null);
+  // Click outside of the account chip -> close
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (!profileRef.current?.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClick);
+  }, []);
 
   return (
-    <nav className="relative w-full z-20 bg-black/90">
+    <nav className="relative w-full z-20 bg-white/95 text-black border-b border-gray-200 dark:bg-black/60 dark:text-white dark:border-white/10">
       <NavigationMenu viewport={false} className="w-full">
         <div className="flex w-full items-center justify-between px-4 py-3">
           <div className="flex items-center gap-4">
@@ -81,27 +99,16 @@ const NavBar = ({
 
           <GiHamburgerMenu
             onClick={onToggleSideBar}
-            className="ml-auto text-gray-400 cursor-pointer hover:text-white duration-200 lg:hidden"
+            className="ml-auto text-gray-600 dark:text-gray-400 cursor-pointer hover:text-black dark:hover:text-white duration-200 lg:hidden"
           />
 
-          <NavigationMenuList className="hidden lg:flex items-center gap-8 text-base text-white">
-            {/* Movies */}
+          <NavigationMenuList className="hidden lg:flex items-center gap-8 text-base text-black dark:text-white">
             <NavigationMenuItem>
               <NavigationMenuTrigger className={triggerClass}>
                 Movies
               </NavigationMenuTrigger>
 
-              <NavigationMenuContent
-                className="
-                  bg-[#0D0D0D]
-                  text-white
-                  rounded-xl
-                  shadow-xl
-                  border border-white/10
-                  p-2
-                  min-w-[200px]
-                "
-              >
+              <NavigationMenuContent className="bg-white text-black dark:bg-[#0D0D0D] dark:text-white rounded-xl shadow-xl border border-gray-200 dark:border-white/10 p-2 min-w-[200px]">
                 <NavigationMenuLink className={dropLink} asChild>
                   <Link to="/movies/popular">Popular</Link>
                 </NavigationMenuLink>
@@ -120,23 +127,12 @@ const NavBar = ({
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {/* TV Shows */}
             <NavigationMenuItem>
               <NavigationMenuTrigger className={triggerClass}>
                 TV Shows
               </NavigationMenuTrigger>
 
-              <NavigationMenuContent
-                className="
-                  bg-[#0D0D0D]
-                  text-white
-                  rounded-xl
-                  shadow-xl
-                  border border-white/10
-                  p-2
-                  min-w-[200px]
-                "
-              >
+              <NavigationMenuContent className="bg-white text-black dark:bg-[#0D0D0D] dark:text-white rounded-xl shadow-xl border border-gray-200 dark:border-white/10 p-2 min-w-[200px]">
                 <NavigationMenuLink className={dropLink} asChild>
                   <Link to="/tv/popular">Popular</Link>
                 </NavigationMenuLink>
@@ -150,53 +146,55 @@ const NavBar = ({
                 </NavigationMenuLink>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            {isProfileOpen && (
-              <div className="absolute right-0 top-full flex flex-col gap-2 bg-gray-800 p-4 w-60 rounded-md font-semibold">
-                <span className="px-2 text-gray-400">
-                  {user?.user_metadata.full_name || "Movix User"}
-                </span>
 
-                <Link
-                  className="hover:bg-gray-600 duration-150 px-2 flex items-center gap-3 cursor-pointer"
-                  to="/account-settings"
-                >
-                  Account Settings
-                </Link>
-
-                <Link
-                  onClick={() => setIsProfileOpen(false)}
-                  className="hover:bg-gray-600 duration-150 px-2 flex items-center gap-3 cursor-pointer"
-                  to="/watchlist"
-                >
-                  My Watchlist
-                </Link>
-
-                <button
-                  onClick={handleSignOut}
-                  className="hover:bg-gray-600 duration-150 px-2 flex items-center gap-3 cursor-pointer"
-                >
-                  Sign Out
-                </button>
-              </div>
-            )}
             {user ? (
-              <div
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-baseline cursor-pointer"
-              >
-                <img
-                  className="rounded-full w-9 hover:opacity-95 duration-150 object-cover h-9"
-                  src={
-                    user.user_metadata?.avatar_url || "/default-profile-pic.jpg"
-                  }
-                />
-                <DropDownArrow className="-translate-x-3" />
+              <div ref={profileRef}>
+                {isProfileOpen && (
+                  <div className="absolute right-0 top-full flex flex-col gap-2 bg-white text-black dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-white/10 p-4 w-60 rounded-md font-semibold shadow-xl">
+                    <span className="px-2 text-gray-600 dark:text-gray-400">
+                      {user?.user_metadata.full_name || "Movix User"}
+                    </span>
+
+                    <Link
+                      className="hover:bg-gray-100 dark:hover:bg-gray-700 duration-150 px-2 flex items-center gap-3 cursor-pointer rounded-md"
+                      to="/account-settings"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      Account Settings
+                    </Link>
+
+                    <Link
+                      onClick={() => setIsProfileOpen(false)}
+                      className="hover:bg-gray-100 dark:hover:bg-gray-700 duration-150 px-2 flex items-center gap-3 cursor-pointer rounded-md"
+                      to="/watchlist"
+                    >
+                      My Watchlist
+                    </Link>
+
+                    <button
+                      onClick={handleSignOut}
+                      className="hover:bg-gray-100 dark:hover:bg-gray-700 duration-150 px-2 flex items-center gap-3 cursor-pointer rounded-md text-left"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+                <div
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-baseline cursor-pointer"
+                >
+                  <img
+                    className="rounded-full w-9 hover:opacity-95 duration-150 object-cover h-9 ring-1 ring-gray-300 dark:ring-white/10"
+                    src={avatarUrl || "/default-profile-pic.jpg"}
+                  />
+                  <DropDownArrow className="-translate-x-3 text-gray-700 dark:text-gray-300" />
+                </div>
               </div>
             ) : (
               <>
                 <button
                   onClick={onToggleSignIn}
-                  className="font-bold hover:underline cursor-pointer"
+                  className="font-bold hover:underline cursor-pointer text-black dark:text-white"
                 >
                   Sign In
                 </button>

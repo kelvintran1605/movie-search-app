@@ -49,7 +49,7 @@ export type WatchlistMovie = {
   image_url: string;
   release_date: string;
   rating: number;
-  created_at: string;
+  created_at?: string;
 };
 
 export type GenreOption = { name: string; value: number };
@@ -60,3 +60,29 @@ export type Filters = {
   language: string;
   yearRange: [number, number];
 };
+
+export type SearchOption = "multi" | "keyword" | "movie" | "person" | "tv";
+
+// Types for search results
+export type SearchPerson = {
+  id: number;
+  name?: string;
+};
+
+export type RawSearchMovie = {
+  title: string;
+  id: number;
+  genre_ids: number[];
+  release_date: string;
+  poster_path: string;
+};
+
+export type SearchMovie = {
+  title?: string;
+  id: number;
+  genres?: number[];
+  year?: string;
+  url: string;
+};
+
+export type SearchMulti = SearchPerson & SearchMovie;
