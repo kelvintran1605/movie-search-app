@@ -47,6 +47,21 @@ export type TmdbMovieDetailWire = {
   backdrop_path?: string;
 };
 
+export type TmdbTvDetailWire = {
+  id: number;
+  name: string;
+  genres: { id: number; name: string }[];
+  first_air_date: string;
+  overview: string;
+  vote_average: number;
+  status: string;
+  spoken_languages: Language[];
+  number_of_episodes: number;
+  number_of_seasons: number;
+  poster_path: string;
+  backdrop_path: string;
+};
+
 export type Language = {
   iso_639_1: string;
   english_name: string;

@@ -1,10 +1,23 @@
 import type {
+  Cast,
+  CastWire,
+  Crew,
+  CrewWire,
+  PersonDetail,
+  PersonDetailWire,
+} from "@/types/person";
+import type {
   MovieDetail,
   MovieSummary,
   RawSearchMovie,
+  RawSearchPerson,
+  RawSearchTv,
   SearchMovie,
+  SearchPerson,
+  SearchTv,
   TmdbCredit,
   TmdbMovieReview,
+  TvDetail,
 } from "../types/movie";
 import type {
   TmdbConfig,
@@ -12,6 +25,7 @@ import type {
   TmdbMovieDetailWire,
   TmdbMovieSummaryWire,
   TmdbReviewWire,
+  TmdbTvDetailWire,
 } from "../types/tmdb.wire";
 import { genres } from "./data";
 
@@ -75,6 +89,26 @@ export const mapTmdbDetail = (
     budget: w.budget,
     revenue: w.revenue,
     status: w.status,
+  };
+};
+
+export const mapTmdbTvDetail = (
+  w: TmdbTvDetailWire,
+  cfg: TmdbConfig
+): TvDetail => {
+  return {
+    id: w.id,
+    name: w.name,
+    genres: w.genres,
+    airDate: getYear(w.first_air_date),
+    overview: w.overview,
+    rating: w.vote_average,
+    status: w.status,
+    spokenLanguages: w.spoken_languages,
+    episodesCount: w.number_of_episodes,
+    seasonsCount: w.number_of_seasons,
+    posterUrl: buildImageUrl(cfg, w.poster_path),
+    backdropUrl: buildImageUrl(cfg, w.backdrop_path, "w1280"),
   };
 };
 
@@ -150,14 +184,74 @@ export const mapSearchMovie = (
   config: TmdbConfig
 ): SearchMovie => {
   return {
-    title: rawSearchMovie.title,
+    title: rawSearchMovie.title || rawSearchMovie.original_name,
     id: rawSearchMovie.id,
     genres: rawSearchMovie.genre_ids,
     year: getYear(rawSearchMovie.release_date),
+    popularity: rawSearchMovie.popularity,
     url: buildImageUrl(config, rawSearchMovie.poster_path, "w92"),
+    media_type: rawSearchMovie.media_type,
+    overview: rawSearchMovie.overview,
+  };
+};
+
+export const mapSearchPerson = (
+  rawSearchPerson: RawSearchPerson,
+  config: TmdbConfig
+): SearchPerson => {
+  return {
+    name: rawSearchPerson.name,
+    id: rawSearchPerson.id,
+    job: getJobTitleFromDepartment(rawSearchPerson.known_for_department),
+    popularity: rawSearchPerson.popularity,
+    url: buildImageUrl(config, rawSearchPerson.profile_path),
+    media_type: rawSearchPerson.media_type,
   };
 };
 
 export const mapMovieGenres = (genreId: number) => {
   return genres.find((genre) => genre.id === genreId)?.name;
+};
+
+export const mapSearchTv = (
+  rawSearchTv: RawSearchTv,
+  config: TmdbConfig
+): SearchTv => {
+  return {
+    name: rawSearchTv.name || rawSearchTv.original_name,
+    id: rawSearchTv.id,
+    genres: rawSearchTv.genre_ids,
+    year: getYear(rawSearchTv.first_air_date),
+    url: buildImageUrl(config, rawSearchTv.poster_path),
+    media_type: rawSearchTv.media_type,
+    overview: rawSearchTv.overview,
+  };
+};
+
+export const mapTmdbPerson = (
+  personDetailWire: PersonDetailWire,
+  config: TmdbConfig
+): PersonDetail => {
+  return {
+    ...personDetailWire,
+    profile_url: buildImageUrl(config, personDetailWire.profile_path),
+  };
+};
+
+export const mapTmdbCast = (castWire: CastWire, config: TmdbConfig): Cast => {
+  return {
+    ...castWire,
+    url: buildImageUrl(config, castWire.poster_path),
+    rating: castWire.vote_average,
+    year: getYear(castWire.release_date ?? castWire.first_air_date),
+  };
+};
+
+export const mapTmdbCrew = (crewWire: CrewWire, config: TmdbConfig): Crew => {
+  return {
+    ...crewWire,
+    url: buildImageUrl(config, crewWire.poster_path),
+    rating: crewWire.vote_average,
+    year: getYear(crewWire.release_date ?? crewWire.first_air_date),
+  };
 };

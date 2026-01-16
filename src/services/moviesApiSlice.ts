@@ -10,12 +10,19 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import tmdbCf from "../samples/tmdb-config.json";
 import {
   mapSearchMovie,
+  mapSearchPerson,
+  mapSearchTv,
   mapTmdbCredit,
   mapTmdbDetail,
   mapTmdbReview,
   mapTmdbSummary,
 } from "@/lib/tmdb.mapper";
-import type { RawSearchMovie, SearchMovie, SearchOption } from "@/types/movie";
+import type {
+  RawSearchMovie,
+  RawSearchPerson,
+  RawSearchTv,
+  SearchOption,
+} from "@/types/movie";
 
 const config = tmdbCf as TmdbConfig;
 
@@ -102,20 +109,49 @@ export const moviesApiSlice = createApi({
 
     // Search movie
     getSearchMovie: build.query({
-      query: ({ query, option }: { query: string; option: SearchOption }) => {
-        return `/search/${option}?query=${query}&api_key=${import.meta.env.VITE_TMDB_KEY}`;
-      },
+      query: ({ query, option, page = 1 }) =>
+        `/search/${option}?query=${encodeURIComponent(query)}&page=${page}&api_key=${
+          import.meta.env.VITE_TMDB_KEY
+        }&include_adult=false`,
+
       transformResponse: (
-        response,
-        meta,
-        { option, query }: { option: SearchOption; query: string }
+        response: any,
+        _,
+        { option }: { option: SearchOption }
       ) => {
-        switch (option) {
-          case "movie":
-            return response.results.map((result: RawSearchMovie) =>
-              mapSearchMovie(result, config)
-            );
+        const results = response?.results ?? [];
+
+        if (option === "movie") {
+          return results.map((item: RawSearchMovie) =>
+            mapSearchMovie(item, config)
+          );
         }
+
+        if (option === "tv") {
+          return results.map((item: RawSearchTv) => mapSearchTv(item, config));
+        }
+
+        if (option === "person") {
+          return results.map((item: RawSearchPerson) =>
+            mapSearchPerson(item, config)
+          );
+        }
+
+        // multi
+        return results
+          .map((item: any) => {
+            switch (item.media_type) {
+              case "movie":
+                return mapSearchMovie(item as RawSearchMovie, config);
+              case "tv":
+                return mapSearchTv(item as RawSearchTv, config);
+              case "person":
+                return mapSearchPerson(item as RawSearchPerson, config);
+              default:
+                return null;
+            }
+          })
+          .filter(Boolean);
       },
     }),
   }),

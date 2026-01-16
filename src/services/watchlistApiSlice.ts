@@ -20,7 +20,14 @@ export const watchlistApiSlice = createApi({
     // Add movie to watchlist
     addtoWatchList: build.mutation<void, WatchlistMovie>({
       invalidatesTags: ["Watchlist"],
-      queryFn: async ({ movie_id, title, image_url, release_date, rating }) => {
+      queryFn: async ({
+        movie_id,
+        title,
+        image_url,
+        release_date,
+        rating,
+        type,
+      }) => {
         const {
           data: { user },
         } = await supabase.auth.getUser();
@@ -32,6 +39,7 @@ export const watchlistApiSlice = createApi({
           image_url,
           release_date,
           rating,
+          type,
         });
 
         if (error) error;

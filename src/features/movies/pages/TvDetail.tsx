@@ -1,9 +1,5 @@
 import { IoPlayCircleOutline as PlayIcon } from "react-icons/io5";
-import {
-  FaRegBookmark as BookMark,
-  FaCheck as CheckIcon,
-} from "react-icons/fa";
-import { MdFavoriteBorder as FavoriteIcon } from "react-icons/md";
+import { FaCheck as CheckIcon } from "react-icons/fa";
 import { IoIosAdd as AddIcon } from "react-icons/io";
 import { useState } from "react";
 import { PiStarFill as StarIcon } from "react-icons/pi";
@@ -11,7 +7,6 @@ import MovieCarousel from "../components/CastCarousel";
 import ReviewCarousel from "../components/ReviewCarousel";
 import {
   useGetCreditQuery,
-  useGetMovieDetailQuery,
   useGetReviewsQuery,
 } from "@/services/moviesApiSlice";
 import { useParams } from "react-router-dom";
@@ -22,8 +17,13 @@ import {
 } from "@/services/watchlistApiSlice";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
+import {
+  useGetTvCreditQuery,
+  useGetTvDetailQuery,
+  useGetTvReviewsQuery,
+} from "@/services/tvApiSlice";
 
-const MovieDetail = () => {
+const TvDetail = () => {
   const [play, setPlay] = useState(false);
   const { data: watchListMovies } = useGetWatchlistQuery();
   const [addToWatchlist, { isLoading: isAddLoading }] =
@@ -37,20 +37,20 @@ const MovieDetail = () => {
     (movie) => movie.movie_id === movieId
   );
 
-  const { data } = useGetMovieDetailQuery(movieId);
-  const { data: credit } = useGetCreditQuery(movieId);
-  const { data: reviews } = useGetReviewsQuery(movieId);
-
+  const { data } = useGetTvDetailQuery(movieId);
+  const { data: credit } = useGetTvCreditQuery(movieId);
+  const { data: reviews } = useGetTvReviewsQuery(movieId);
+  console.log(reviews);
   const handleAdd = async () => {
     if (!data) return;
 
     await addToWatchlist({
       movie_id: data.id,
-      title: data.title,
-      image_url: data?.imgUrl,
-      release_date: data?.year,
+      title: data.name,
+      image_url: data?.posterUrl,
+      release_date: data?.airDate,
       rating: data?.rating,
-      type: "movie",
+      type: "tv",
     });
     toast.success("Added to Watchlist!");
   };
@@ -91,7 +91,7 @@ const MovieDetail = () => {
             <img
               src={data?.backdropUrl}
               className="w-full h-full object-cover"
-              alt={data?.title || "Movie backdrop"}
+              //   alt={data?.title || "Movie backdrop"}
             />
           </div>
         )}
@@ -100,15 +100,14 @@ const MovieDetail = () => {
       <div className="flex gap-14">
         <img
           className="w-[300px] h-[450px] object-cover rounded-xl"
-          src={data?.imgUrl}
-          alt={data?.title || "Movie poster"}
+          src={data?.posterUrl}
+          alt={data?.name || "Movie poster"}
         />
 
         <div className="flex flex-col gap-8 z-10 w-1/2">
           <div className="flex items-center justify-between">
-            <h2 className="font-bold text-4xl">{data?.title}</h2>
+            <h2 className="font-bold text-4xl">{data?.name}</h2>
           </div>
-
           <div className="flex items-center gap-2 flex-wrap">
             {data?.genres.map((genre, i) =>
               typeof genre === "number" ? null : (
@@ -123,13 +122,9 @@ const MovieDetail = () => {
               )
             )}
           </div>
-
           <div className="flex gap-2 items-center text-slate-700 dark:text-slate-300">
-            <div>{data?.year}</div>
-            <span>•</span>
-            <div>{data?.duration} minutes</div>
+            <div>{data?.airDate}</div>
           </div>
-
           <div className="flex items-center gap-4">
             {isMovieInWatchlist ? (
               <button
@@ -174,48 +169,12 @@ const MovieDetail = () => {
                 )}
               </button>
             )}
-
-            <div className="relative group">
-              <div
-                className="rounded-full duration-150 cursor-pointer p-2
-                hover:bg-slate-100 hover:text-slate-900
-                dark:hover:bg-white dark:hover:text-black"
-              >
-                <BookMark className="text-2xl" />
-              </div>
-
-              <span
-                className="absolute top-full mb-2 left-1/2 -translate-x-1/2 translate-y-1/3 whitespace-nowrap rounded-md text-md px-2 py-1
-                opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none
-                bg-slate-900 text-white dark:bg-gray-800"
-              >
-                Add to Watchlist
-              </span>
-            </div>
-
-            <div className="relative group">
-              <div
-                className="rounded-full duration-150 cursor-pointer p-1
-                hover:bg-slate-100 hover:text-slate-900
-                dark:hover:bg-white dark:hover:text-black"
-              >
-                <FavoriteIcon className="text-3xl" />
-              </div>
-
-              <span
-                className="absolute top-full mb-2 left-1/2 -translate-x-1/2 translate-y-1/3 whitespace-nowrap rounded-md text-md px-2 py-1
-                opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none
-                bg-slate-900 text-white dark:bg-gray-800"
-              >
-                Add to Favorites
-              </span>
-            </div>
           </div>
 
+          {/* Overview */}
           <div className="text-slate-700 dark:text-slate-200">
             {data?.overview}
           </div>
-
           <div className="flex items-center justify-between w-1/3">
             <div>
               <div className="font-bold">Director</div>
@@ -256,7 +215,7 @@ const MovieDetail = () => {
               Spoken Languages
             </div>
             <div className="flex gap-4 items-center text-slate-700 dark:text-slate-200">
-              {data?.spokenLanguage.map((language) => (
+              {data?.spokenLanguages.map((language) => (
                 <span key={language.iso_639_1}>{language.name}</span>
               ))}
             </div>
@@ -264,29 +223,25 @@ const MovieDetail = () => {
 
           <div>
             <div className="text-sky-600 dark:text-[#60A5FA] text-xl font-bold">
-              Budget
+              Total Episodes
             </div>
             <div className="text-slate-700 dark:text-slate-200">
-              {data?.budget === 0
-                ? "Not yet updated"
-                : `$ ${data?.budget.toLocaleString()}`}
+              {data?.episodesCount ?? "Not yet updated"}
             </div>
           </div>
 
           <div>
             <div className="text-sky-600 dark:text-[#60A5FA] text-xl font-bold">
-              Revenue
+              Total Seasons
             </div>
             <div className="text-slate-700 dark:text-slate-200">
-              {data?.revenue === 0
-                ? "Not yet updated"
-                : `$ ${data?.revenue.toLocaleString()}`}
+              {data?.seasonsCount ?? "Not yet updated"}
             </div>
           </div>
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold">Cast of {data?.title}</h2>
+      {/* <h2 className="text-2xl font-bold">Cast of {data?.title}</h2> */}
       <MovieCarousel cast={credit?.cast ?? []} />
 
       <h2 className="text-2xl font-bold">Reviews</h2>
@@ -295,4 +250,4 @@ const MovieDetail = () => {
   );
 };
 
-export default MovieDetail;
+export default TvDetail;

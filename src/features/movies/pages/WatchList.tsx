@@ -105,7 +105,7 @@ const WatchList = () => {
 
       <div className="flex items-center flex-wrap justify-start gap-8">
         {sortedMovies.map((movie) => (
-          <Link key={movie.movie_id} to={`/movie/${movie.movie_id}`}>
+          <Link key={movie.movie_id} to={`/${movie.type}/${movie.movie_id}`}>
             <MovieCard
               name={movie.title}
               date={movie.release_date}

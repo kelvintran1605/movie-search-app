@@ -1,7 +1,7 @@
 import { FiLayers } from "react-icons/fi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { CiSearch } from "react-icons/ci";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { MdClear } from "react-icons/md";
 import { MdOutlineMovie } from "react-icons/md";
 import { VscSymbolKeyword } from "react-icons/vsc";
@@ -10,6 +10,7 @@ import { IoTvOutline } from "react-icons/io5";
 import { useGetSearchMovieQuery } from "@/services/moviesApiSlice";
 import type { SearchOption } from "@/types/movie";
 import ResultPanel from "./ResultPanel";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
   // Open/Close state of UIs
@@ -19,6 +20,7 @@ const SearchBar = () => {
   // Query/Debounce
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
+  const [recentSearch, setRecentSearch] = useState([]);
   // Refs
   const optionRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,11 +37,6 @@ const SearchBar = () => {
         name: "Movie",
         value: "movie",
         icon: <MdOutlineMovie />,
-      },
-      {
-        name: "Keyword",
-        value: "keyword",
-        icon: <VscSymbolKeyword />,
       },
       {
         name: "Person",
@@ -60,7 +57,7 @@ const SearchBar = () => {
       query: submittedQuery,
       option: selectedOption.value as SearchOption,
     },
-    { skip: submittedQuery.trim().length < 2 }
+    { skip: submittedQuery.trim().length < 1 }
   );
 
   console.log(data);
@@ -73,6 +70,12 @@ const SearchBar = () => {
   const handleSelectOption = (option: any) => {
     setSelectedOption(option);
     setIsOptionsOpen(false);
+  };
+
+  const handleClickItem = () => {
+    setIsOptionsOpen(false);
+    setQuery("");
+    inputRef.current?.blur();
   };
 
   // Debounce
@@ -96,10 +99,24 @@ const SearchBar = () => {
     document.addEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const navigate = useNavigate();
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      navigate(`/search?query=${query}&option=${selectedOption.value}`);
+    }
+  };
   return (
     <div className="relative border border-gray-500 h-10 w-160 rounded-md flex hover:border-indigo-500 duration-250 group focus-within:border-indigo-500">
       {/* Result Panel */}
-      {isPanelOpen && <ResultPanel results={data} />}
+      {isPanelOpen && (
+        <ResultPanel
+          query={query}
+          onPanelOpen={handleClickItem}
+          option={selectedOption.value as SearchOption}
+          results={data}
+        />
+      )}
 
       <div ref={optionRef} className="w-2/5">
         <div
@@ -109,7 +126,7 @@ const SearchBar = () => {
           <div className="flex gap-2 items-center">
             {selectedOption.icon} {selectedOption.name}
           </div>
-          <MdKeyboardArrowDown className="" />
+          <MdKeyboardArrowDown />
         </div>
         {/* Options */}
         {isOptionsOpen && (
@@ -126,7 +143,6 @@ const SearchBar = () => {
           </div>
         )}
       </div>
-
       <input
         onFocus={() => setPanelOpen(true)}
         onBlur={() => setPanelOpen(false)}
@@ -136,6 +152,7 @@ const SearchBar = () => {
         className="w-full pl-3 pr-5 outline-none"
         type="text"
         placeholder="Search movies, TV shows, people..."
+        onKeyDown={handleKeyDown}
       />
 
       <CiSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-xl cursor-pointer" />

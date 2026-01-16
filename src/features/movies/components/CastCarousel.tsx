@@ -4,6 +4,7 @@ import {
   FaArrowAltCircleRight as NextArrow,
   FaArrowAltCircleLeft as PrevArrow,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const CastCarousel = ({
   cast,
@@ -38,19 +39,23 @@ const CastCarousel = ({
         />
 
         <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mt-2">
             {cast.map((e) => (
-              <div key={e.id} className="shrink-0 text-center">
+              <Link
+                to={`/person/${e.id}`}
+                key={e.id}
+                className="shrink-0 text-center cursor-pointer"
+              >
                 <img
                   src={e.profileUrl}
-                  className="mx-auto h-40 w-40 rounded-full object-cover ring-1 ring-slate-200 dark:ring-white/10"
+                  className="mx-auto hover:scale-105 duration-150 h-40 w-40 rounded-full object-cover ring-1 ring-slate-200 dark:ring-white/10"
                   alt={e.name}
                 />
                 <div className="mt-4 font-bold">{e.name}</div>
                 <div className="text-slate-500 text-md dark:text-white/60 truncate w-40">
                   {e.character}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
