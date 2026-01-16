@@ -119,39 +119,51 @@ export const moviesApiSlice = createApi({
         _,
         { option }: { option: SearchOption }
       ) => {
-        const results = response?.results ?? [];
-
         if (option === "movie") {
-          return results.map((item: RawSearchMovie) =>
-            mapSearchMovie(item, config)
-          );
+          return {
+            results: response.results.map((item: RawSearchMovie) =>
+              mapSearchMovie(item, config)
+            ),
+            total_pages: response.total_pages,
+          };
         }
 
         if (option === "tv") {
-          return results.map((item: RawSearchTv) => mapSearchTv(item, config));
+          return {
+            results: response.results.map((item: RawSearchTv) =>
+              mapSearchTv(item, config)
+            ),
+            total_pages: response.total_pages,
+          };
         }
 
         if (option === "person") {
-          return results.map((item: RawSearchPerson) =>
-            mapSearchPerson(item, config)
-          );
+          return {
+            results: response.results.map((item: RawSearchPerson) =>
+              mapSearchPerson(item, config)
+            ),
+            total_pages: response.total_pages,
+          };
         }
 
         // multi
-        return results
-          .map((item: any) => {
-            switch (item.media_type) {
-              case "movie":
-                return mapSearchMovie(item as RawSearchMovie, config);
-              case "tv":
-                return mapSearchTv(item as RawSearchTv, config);
-              case "person":
-                return mapSearchPerson(item as RawSearchPerson, config);
-              default:
-                return null;
-            }
-          })
-          .filter(Boolean);
+        return {
+          results: response.results
+            .map((item: any) => {
+              switch (item.media_type) {
+                case "movie":
+                  return mapSearchMovie(item as RawSearchMovie, config);
+                case "tv":
+                  return mapSearchTv(item as RawSearchTv, config);
+                case "person":
+                  return mapSearchPerson(item as RawSearchPerson, config);
+                default:
+                  return null;
+              }
+            })
+            .filter(Boolean),
+          total_pages: response.total_pages,
+        };
       },
     }),
   }),

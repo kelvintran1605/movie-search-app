@@ -4,13 +4,13 @@ import { CiSearch } from "react-icons/ci";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { MdClear } from "react-icons/md";
 import { MdOutlineMovie } from "react-icons/md";
-import { VscSymbolKeyword } from "react-icons/vsc";
 import { FaPerson } from "react-icons/fa6";
 import { IoTvOutline } from "react-icons/io5";
 import { useGetSearchMovieQuery } from "@/services/moviesApiSlice";
 import type { SearchOption } from "@/types/movie";
 import ResultPanel from "./ResultPanel";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { MdHistory } from "react-icons/md";
 
 const SearchBar = () => {
   // Open/Close state of UIs
@@ -20,7 +20,10 @@ const SearchBar = () => {
   // Query/Debounce
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [recentSearch, setRecentSearch] = useState([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>(
+    JSON.parse(localStorage.getItem("recentSearches") || "[]")
+  );
+
   // Refs
   const optionRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -103,19 +106,51 @@ const SearchBar = () => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      navigate(`/search?query=${query}&option=${selectedOption.value}`);
+      const q = query.trim();
+      if (!q) return;
+
+      navigate(
+        `/search?query=${encodeURIComponent(q)}&option=${selectedOption.value}&page=1`
+      );
+
+      const stored: string[] = JSON.parse(
+        localStorage.getItem("recentSearches") || "[]"
+      );
+
+      const next = [q, ...stored.filter((x) => x !== q)].slice(0, 8);
+
+      localStorage.setItem("recentSearches", JSON.stringify(next));
+      setRecentSearches(next);
     }
   };
+
   return (
     <div className="relative border border-gray-500 h-10 w-160 rounded-md flex hover:border-indigo-500 duration-250 group focus-within:border-indigo-500">
       {/* Result Panel */}
-      {isPanelOpen && (
+      {isPanelOpen && query.length > 1 ? (
         <ResultPanel
           query={query}
           onPanelOpen={handleClickItem}
           option={selectedOption.value as SearchOption}
-          results={data}
+          results={data?.results}
         />
+      ) : (
+        isPanelOpen && (
+          <div className="w-full min-h-120 absolute dark:bg-[#1A1A1A] top-full rounded-md p-4">
+            <div className="font-bold text-xl text-gray-300 mb-2">
+              Recent Searches
+            </div>
+            {recentSearches.map((search) => (
+              <Link
+                to={`/search?query=${search}&option=${selectedOption.value}&page=1`}
+                className="flex items-center gap-2 px-1 py-2 w-full hover:bg-gray-300/20 cursor-pointer rounded-xl"
+              >
+                <MdHistory className="text-xl" />
+                <span className="text-md font-bold">{search}</span>
+              </Link>
+            ))}
+          </div>
+        )
       )}
 
       <div ref={optionRef} className="w-2/5">

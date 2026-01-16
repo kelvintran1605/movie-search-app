@@ -12,6 +12,8 @@ import type {
   SearchPerson,
   SearchTv,
 } from "@/types/movie";
+import { useState } from "react";
+import PaginationBar from "../components/PaginationBar";
 
 // A convenient union type for anything that can appear in search results.
 // (Depending on your definitions, SearchMulti might already include Movie/Tv/Person,
@@ -20,19 +22,28 @@ type SearchResult = SearchMovie | SearchTv | SearchPerson | SearchMulti;
 
 const SearchResults = () => {
   // Read query params from URL: /search?query=...&option=...
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") ?? "";
   const option = (searchParams.get("option") ?? "multi") as SearchOption;
 
+  // Get & Set page, default is 1:
+  const page = Number(searchParams.get("page"));
+
+  const handlePageChange = (nextPage: number) => {
+    const sp = new URLSearchParams(searchParams);
+    sp.set("page", String(nextPage));
+    setSearchParams(sp);
+  };
+
   // Fetch search data (RTK Query)
   const { data, isFetching, isError } = useGetSearchMovieQuery(
-    { query, option },
+    { query, option, page },
     // If query is empty, skip calling the API (optional UX improvement)
     { skip: query.trim() === "" }
   );
 
   // Ensure we always have an array
-  const results = (data ?? []) as SearchResult[];
+  const results = (data?.results ?? []) as SearchResult[];
 
   // If you use TMDB multi-search, results usually include media_type.
   // We categorize for "multi" option.
@@ -69,6 +80,12 @@ const SearchResults = () => {
               <ResultSection sectionName="Results" results={results} />
             </div>
           )}
+
+          <PaginationBar
+            currentPage={page}
+            totalPages={data?.total_pages}
+            onPageChange={handlePageChange}
+          />
         </>
       )}
     </div>

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Hero = () => {
   return (
     <div className="relative inset-0 w-full h-[700px] z-10 flex">
@@ -22,20 +24,21 @@ const Hero = () => {
             Search across a world of blockbusters, indie gems, award-winning
             films, and hidden treasures.
           </p>
-          <button
+          <Link
+            to={`/movies/popular`}
             className="
                 px-2 py-2 mt-4
                 bg-linear-to-r from-[#3B82F6] to-[#60A5FA]
                 text-white font-semibold
-                rounded-full
+                rounded-full flex items-center justify-center
                 shadow-md shadow-blue-500/20
                 transition-all duration-300
                 hover:shadow-lg hover:shadow-blue-400/30
                 hover:scale-[1.04]
                 cursor-pointer w-40"
           >
-            Search Now
-          </button>
+            Discover Now
+          </Link>
         </div>
       </div>
     </div>
