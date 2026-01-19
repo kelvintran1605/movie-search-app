@@ -1,12 +1,23 @@
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useState } from "react";
+import { AiOutlineLike } from "react-icons/ai";
 import {
   FaArrowAltCircleRight as NextArrow,
   FaArrowAltCircleLeft as PrevArrow,
 } from "react-icons/fa";
 import type { MovieDetail } from "@/types/movie";
 const FeaturedHero = ({ movies }: { movies: MovieDetail[] }) => {
+  const getNextMovies = (selectedIndex: number) => {
+    const nextMovies = [];
+
+    for (let i = 1; i <= 3; i++) {
+      nextMovies.push(movies[(selectedIndex + i) % movies.length]);
+    }
+
+    return nextMovies;
+  };
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -58,13 +69,30 @@ const FeaturedHero = ({ movies }: { movies: MovieDetail[] }) => {
       </div>
 
       {/* Right Column */}
-      <div className="flex flex-col gap-2 items-center">
-        <div className="font-semibold text-cyan-400 text-2xl mt-2">Up next</div>
-        {Array.from({ length: 3 }).map((e) => (
-          <div className="flex">
-            <div className="w-10 h-20 bg-red-500"></div>
-          </div>
-        ))}
+      <div className="flex flex-col gap-8 items-center">
+        <div className="font-semibold text-cyan-400 text-2xl mt-2 text-left w-full">
+          Up next
+        </div>
+        <div className="flex flex-col gap-8">
+          {getNextMovies(selectedIndex).map((e) => (
+            <Link
+              to={`/movie/${e?.id}`}
+              className="flex gap-3 items-center cursor-pointer"
+            >
+              <img src={e?.imgUrl || ""} className="w-23 rounded-xl h-35" />
+              <div className="flex flex-col gap-1">
+                <div className="text-xl hover:text-blue-400 duration-150">
+                  {e?.title}
+                </div>
+                <div className="text-gray-300">Watch the trailer</div>
+                <div>{e?.year}</div>
+                <div className="flex items-center gap-2">
+                  {<AiOutlineLike />} {e?.rating.toFixed(1)}/10
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
