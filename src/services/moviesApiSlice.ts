@@ -22,6 +22,7 @@ import type {
   RawSearchPerson,
   RawSearchTv,
   SearchOption,
+  Trailer,
 } from "@/types/movie";
 
 const config = tmdbCf as TmdbConfig;
@@ -61,7 +62,7 @@ export const moviesApiSlice = createApi({
         `/configuration/languages?sort_by=title.asc&api_key=${import.meta.env.VITE_TMDB_KEY}`,
       transformResponse: (res: Language[]) => {
         const languages = res.sort((a, b) =>
-          a.english_name.localeCompare(b.english_name)
+          a.english_name.localeCompare(b.english_name),
         );
         return languages;
       },
@@ -117,12 +118,12 @@ export const moviesApiSlice = createApi({
       transformResponse: (
         response: any,
         _,
-        { option }: { option: SearchOption }
+        { option }: { option: SearchOption },
       ) => {
         if (option === "movie") {
           return {
             results: response.results.map((item: RawSearchMovie) =>
-              mapSearchMovie(item, config)
+              mapSearchMovie(item, config),
             ),
             total_pages: response.total_pages,
           };
@@ -131,7 +132,7 @@ export const moviesApiSlice = createApi({
         if (option === "tv") {
           return {
             results: response.results.map((item: RawSearchTv) =>
-              mapSearchTv(item, config)
+              mapSearchTv(item, config),
             ),
             total_pages: response.total_pages,
           };
@@ -140,7 +141,7 @@ export const moviesApiSlice = createApi({
         if (option === "person") {
           return {
             results: response.results.map((item: RawSearchPerson) =>
-              mapSearchPerson(item, config)
+              mapSearchPerson(item, config),
             ),
             total_pages: response.total_pages,
           };
@@ -166,6 +167,29 @@ export const moviesApiSlice = createApi({
         };
       },
     }),
+
+    getTrailer: build.query({
+      query: (id: number) => {
+        return `/movie/${id}/videos?api_key=${import.meta.env.VITE_TMDB_KEY}`;
+      },
+      transformResponse: (res) => {
+        const video: Trailer = res.results.filter(
+          (r: Trailer) => r.site === "YouTube" && r.official === true,
+        )[0];
+
+        return `https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1&controls=1`;
+      },
+    }),
+
+    getTrendingMovies: build.query({
+      query: (time_window: "day" | "week") => {
+        return `/trending/movie/${time_window}?api_key=${import.meta.env.VITE_TMDB_KEY}`;
+      },
+      transformResponse: (res) => {
+        const trendingMoviesWire: TmdbMovieDetailWire[] = res.results;
+        return trendingMoviesWire.map((movie) => mapTmdbDetail(movie, config));
+      },
+    }),
   }),
 });
 
@@ -177,4 +201,6 @@ export const {
   useGetReviewsQuery,
   useGetNowPlayingQuery,
   useGetSearchMovieQuery,
+  useGetTrailerQuery,
+  useGetTrendingMoviesQuery,
 } = moviesApiSlice;

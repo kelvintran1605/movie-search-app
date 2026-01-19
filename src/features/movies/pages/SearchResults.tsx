@@ -12,7 +12,6 @@ import type {
   SearchPerson,
   SearchTv,
 } from "@/types/movie";
-import { useState } from "react";
 import PaginationBar from "../components/PaginationBar";
 
 // A convenient union type for anything that can appear in search results.
@@ -39,7 +38,7 @@ const SearchResults = () => {
   const { data, isFetching, isError } = useGetSearchMovieQuery(
     { query, option, page },
     // If query is empty, skip calling the API (optional UX improvement)
-    { skip: query.trim() === "" }
+    { skip: query.trim() === "" },
   );
 
   // Ensure we always have an array
@@ -123,9 +122,6 @@ const ResultSection = ({
 };
 
 const ResultCard = ({ result }: { result: SearchResult }) => {
-  // IMPORTANT:
-  // Hooks must be called inside a React component (NOT inside helper functions).
-  // We only fetch person detail (biography) when the result is a person.
   const isPersonResult = isPerson(result);
 
   const { data: personDetail } = useGetPersonDetailQuery(result.id, {
@@ -164,14 +160,10 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
   );
 };
 
-/* =========================
-   Type Guards (Safe Filters)
-   ========================= */
-
-// Return media_type if it exists; fallback to "movie" if your single-search doesn’t provide it.
 function getMediaType(r: SearchResult): "movie" | "tv" | "person" {
   if ("media_type" in r && (r as any).media_type) return (r as any).media_type;
   // Fallback guesses (optional)
+  if ("job" in r) return "person";
   if ("title" in r) return "movie";
   if ("name" in r) return "tv";
   return "movie";

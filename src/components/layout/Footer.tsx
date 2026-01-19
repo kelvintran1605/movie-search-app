@@ -2,7 +2,7 @@ import { FaRegCopyright } from "react-icons/fa6";
 
 const Footer = () => {
   return (
-    <footer className="mt-12 w-full bg-white/70 dark:bg-black/60 backdrop-blur-xl border-t border-slate-200/60 dark:border-white/10">
+    <footer className="mt-12 w-full bg-white/70 dark:bg-black/60 backdrop-blur-xl border-t border-slate-800/60 dark:border-white/10">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12 py-10">
         <div className="grid gap-10 md:grid-cols-3 md:items-start border-b border-slate-200/60 dark:border-white/10 pb-10">
           <div className="flex flex-col gap-3 md:max-w-sm">

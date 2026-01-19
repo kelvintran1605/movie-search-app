@@ -33,13 +33,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-      }
+        getSupabaseAvatar(session?.user?.id || "");
+      },
     );
 
     return () => sub.subscription.unsubscribe();
   }, []);
   return (
-    <AuthContext.Provider value={{ session, user, loading, avatarUrl, setAvatarUrl }}>
+    <AuthContext.Provider
+      value={{ session, user, loading, avatarUrl, setAvatarUrl }}
+    >
       {children}
     </AuthContext.Provider>
   );

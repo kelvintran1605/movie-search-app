@@ -11,7 +11,9 @@ import type { SearchOption } from "@/types/movie";
 import ResultPanel from "./ResultPanel";
 import { Link, useNavigate } from "react-router-dom";
 import { MdHistory } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
 
+type RecentSearch = {};
 const SearchBar = () => {
   // Open/Close state of UIs
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
@@ -124,6 +126,35 @@ const SearchBar = () => {
     }
   };
 
+  const handleClickSearch = () => {
+    const q = query.trim();
+    if (!q) return;
+
+    navigate(
+      `/search?query=${encodeURIComponent(q)}&option=${selectedOption.value}&page=1`
+    );
+
+    const stored: string[] = JSON.parse(
+      localStorage.getItem("recentSearches") || "[]"
+    );
+
+    const next = [q, ...stored.filter((x) => x !== q)].slice(0, 8);
+
+    localStorage.setItem("recentSearches", JSON.stringify(next));
+    setRecentSearches(next);
+  };
+
+  const handleRemoveSearch = (search: string) => {
+    const stored: string[] = JSON.parse(
+      localStorage.getItem("recentSearches") || "[]"
+    );
+
+    const next = stored.filter((query) => query !== search);
+
+    localStorage.setItem("recentSearches", JSON.stringify(next));
+    setRecentSearches(next);
+  };
+
   return (
     <div className="relative border border-gray-500 h-10 w-160 rounded-md flex hover:border-indigo-500 duration-250 group focus-within:border-indigo-500">
       {/* Result Panel */}
@@ -135,20 +166,44 @@ const SearchBar = () => {
           results={data?.results}
         />
       ) : (
+        // Recent Searches
         isPanelOpen && (
-          <div className="w-full min-h-120 absolute dark:bg-[#1A1A1A] top-full rounded-md p-4">
+          <div className="w-full min-h-100 absolute dark:bg-[#1A1A1A] top-full rounded-md p-4">
             <div className="font-bold text-xl text-gray-300 mb-2">
               Recent Searches
             </div>
-            {recentSearches.map((search) => (
-              <Link
-                to={`/search?query=${search}&option=${selectedOption.value}&page=1`}
-                className="flex items-center gap-2 px-1 py-2 w-full hover:bg-gray-300/20 cursor-pointer rounded-xl"
-              >
-                <MdHistory className="text-xl" />
-                <span className="text-md font-bold">{search}</span>
-              </Link>
-            ))}
+            {recentSearches.length === 0 ? (
+              <div className="text-center text-gray-400 select-text">
+                No recent searches
+              </div>
+            ) : (
+              recentSearches.map((search) => (
+                <div className="flex justify-between items-center px-1 py-2 w-full rounded-xl">
+                  <div
+                    onMouseDown={() => {
+                      navigate(
+                        `/search?query=${encodeURIComponent(search)}&option=${selectedOption.value}&page=1`
+                      );
+                    }}
+                    className="flex items-center gap-2 flex-1 hover:bg-gray-300/20 px-2 py-1 rounded-xl duration-150 cursor-pointer"
+                  >
+                    <MdHistory className="text-xl" />
+                    <span className="text-md font-bold">{search}</span>
+                  </div>
+
+                  <button
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemoveSearch(search);
+                    }}
+                    className="p-2 rounded-full hover:bg-gray-300/20 text-gray-500 duration-150 cursor-pointer"
+                  >
+                    <IoMdClose />
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         )
       )}
@@ -190,7 +245,10 @@ const SearchBar = () => {
         onKeyDown={handleKeyDown}
       />
 
-      <CiSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-xl cursor-pointer" />
+      <CiSearch
+        onClick={handleClickSearch}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-xl cursor-pointer"
+      />
       {query && (
         <MdClear
           onClick={handleClearResult}

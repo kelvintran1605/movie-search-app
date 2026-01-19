@@ -95,7 +95,7 @@ export type SearchPerson = {
   job: string;
   url: string;
   popularity: number;
-  media_type: string; 
+  media_type: string;
 };
 
 export type RawSearchMovie = {
@@ -147,3 +147,10 @@ export type SearchMulti = SearchTv &
   SearchMovie & {
     media_type: string;
   };
+
+export type Trailer = {
+  id: number;
+  key: string;
+  site: string;
+  official: boolean;
+};

@@ -28,7 +28,7 @@ const PaginationBar = ({
 
   return (
     <div
-      className="flex items-center justify-center select-none mt-10 mb-10 text-sm rounded-full overflow-hidden
+      className="flex max-w-150 mx-auto items-center justify-center select-none mt-10 mb-10 text-sm rounded-full overflow-hidden
       border border-slate-300 bg-slate-100 text-slate-800
       dark:border-white/10 dark:bg-white/10 dark:text-white"
     >

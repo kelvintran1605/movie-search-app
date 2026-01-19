@@ -13,6 +13,7 @@ import {
   useGetCreditQuery,
   useGetMovieDetailQuery,
   useGetReviewsQuery,
+  useGetTrailerQuery,
 } from "@/services/moviesApiSlice";
 import { useParams } from "react-router-dom";
 import {
@@ -24,15 +25,15 @@ import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 
 const MovieDetail = () => {
+  const { id } = useParams();
+  const movieId = Number(id);
   const [play, setPlay] = useState(false);
   const { data: watchListMovies } = useGetWatchlistQuery();
   const [addToWatchlist, { isLoading: isAddLoading }] =
     useAddtoWatchListMutation();
   const [removeFromWatchlist, { isLoading: isRemoveLoading }] =
     useRemoveFromWatchlistMutation();
-  const { id } = useParams();
-  const movieId = Number(id);
-
+  const { data: trailerLink } = useGetTrailerQuery(movieId);
   const isMovieInWatchlist = watchListMovies?.some(
     (movie) => movie.movie_id === movieId
   );
@@ -67,7 +68,7 @@ const MovieDetail = () => {
         {play ? (
           <iframe
             className="w-full h-[500px]"
-            src="https://www.youtube.com/embed/PJrvkIgwFPI?autoplay=1&mute=1&controls=1"
+            src={trailerLink}
             title="YouTube video"
             allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
             allowFullScreen

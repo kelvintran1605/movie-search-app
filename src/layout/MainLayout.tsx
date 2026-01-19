@@ -19,7 +19,7 @@ const MainLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white text-slate-900 dark:bg-[#0D0D0D] dark:text-white">
       <Toaster
-        position="top-right"
+        position="top-center"
         toastOptions={{
           duration: 3000,
           style: {

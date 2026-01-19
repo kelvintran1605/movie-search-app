@@ -11,6 +11,7 @@ import TvDetail from "./features/movies/pages/TvDetail";
 import CastDetail from "./features/movies/pages/CastDetail";
 import SearchResults from "./features/movies/pages/SearchResults";
 import ScrollToTop from "./features/movies/components/ScrollToTop";
+import ProtectedRoute from "./features/auth/components/ProtectedRoute";
 function App() {
   return (
     <>
@@ -23,8 +24,22 @@ function App() {
           <Route path="movies/now-playing" element={<NowPlaying />} />
           <Route path="person/:id" element={<CastDetail />} />
           <Route path="movie/:id" element={<MovieDetail />} />
-          <Route path="watchlist" element={<WatchList />} />
-          <Route path="account-settings" element={<AccountSettings />} />
+          <Route
+            path="watchlist"
+            element={
+              <ProtectedRoute>
+                <WatchList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="account-settings"
+            element={
+              <ProtectedRoute>
+                <AccountSettings />
+              </ProtectedRoute>
+            }
+          />
           <Route path="search" element={<SearchResults />} />
         </Route>
       </Routes>

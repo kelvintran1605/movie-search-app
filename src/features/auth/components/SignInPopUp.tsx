@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { IoMdClose as CloseButton } from "react-icons/io";
 import { FaDiscord, FaEyeSlash, FaEye } from "react-icons/fa";
 import { supabase } from "@/lib/supabase";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import toast from "react-hot-toast";
 
 const SignInPopUp = ({
   onToggleSignIn,
@@ -12,6 +14,7 @@ const SignInPopUp = ({
   onToggleSignUp: () => void;
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,20 +64,23 @@ const SignInPopUp = ({
   // Function to handle in-app login
   const handleInAppSignIn = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      setError(error.message);
-      return;
-    }
-
-    setTimeout(() => {
+      if (error) {
+        setError(error.message);
+        return;
+      }
+      toast.success("Signed in successfully");
       onToggleSignIn();
-    }, 500);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -205,9 +211,13 @@ const SignInPopUp = ({
 
           <button
             type="submit"
-            className="w-full bg-[#60A5FA] text-white rounded-md p-4 mt-4 hover:bg-[#60A5FA]/90 cursor-pointer font-semibold"
+            className="w-full bg-[#60A5FA] flex items-center justify-center text-white rounded-md p-4 mt-4 hover:bg-[#60A5FA]/90 cursor-pointer font-semibold"
           >
-            Sign In
+            {isLoading ? (
+              <AiOutlineLoading3Quarters className="animate-spin" />
+            ) : (
+              "Sign In"
+            )}
           </button>
 
           <span className="list-disc list-inside text-red-400 font-semibold mt-2 text-base">

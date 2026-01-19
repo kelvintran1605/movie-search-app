@@ -28,11 +28,11 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
   const [isLanguageOpen, setLanguageOpen] = useState(false);
 
   const [draftGenreIds, setDraftGenreIds] = useState<number[]>(
-    searchParams.get("genreIds")?.split(",").map(Number) || []
+    searchParams.get("genreIds")?.split(",").map(Number) || [],
   );
   const [sortBy, setSortBy] = useState(sortByOptions[0].value);
   const [language, setLanguage] = useState<string>(
-    searchParams.get("language") || ""
+    searchParams.get("language") || "",
   );
   const [yearRange, setYearRange] = useState<[number, number]>([2000, 2025]);
 
@@ -42,7 +42,7 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
         .get("genreIds")
         ?.split(",")
         .map(Number)
-        .filter(Number.isFinite) || []
+        .filter(Number.isFinite) || [],
     );
 
     setLanguage(searchParams.get("language") || "");
@@ -70,7 +70,7 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
 
   const toggleGenre = (id: number) => {
     setDraftGenreIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   };
 
@@ -108,7 +108,7 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
           <div
             onClick={() =>
               setSortByOrder(
-                sortByOrder === "Ascending" ? "Descending" : "Ascending"
+                sortByOrder === "Ascending" ? "Descending" : "Ascending",
               )
             }
             className="text-xl cursor-pointer hover:text-slate-500 dark:hover:text-gray-400 duration-150"
@@ -246,10 +246,10 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
                     sortBy + (sortByOrder === "Ascending" ? ".asc" : ".desc"),
                   language,
                   yearRange,
-                })
+                }),
               )
             }
-            className="bg-sky-500 dark:bg-sky-400 text-white dark:text-slate-900 w-full p-3 rounded-3xl mt-8 sm:mt-10 cursor-pointer hover:opacity-90 hover:scale-[1.02] duration-150 font-semibold"
+            className="bg-sky-500 dark:bg-sky-400 text-white w-full p-3 rounded-3xl mt-8 sm:mt-10 cursor-pointer hover:opacity-90 hover:scale-[1.02] duration-150 font-semibold"
           >
             Apply Filters
             {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ""}

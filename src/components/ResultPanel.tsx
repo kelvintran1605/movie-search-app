@@ -16,7 +16,7 @@ const ResultPanel = ({
 }) => {
   const navigate = useNavigate();
   const handleAllResults = () => {
-    navigate(`/search?query=${query}&option=${option}`);
+    navigate(`/search?query=${query}&option=${option}&page=1`);
     console.log("Button clicked");
   };
   return (

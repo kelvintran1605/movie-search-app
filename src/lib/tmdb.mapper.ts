@@ -41,7 +41,7 @@ export const pickPosterSize = (cfg: TmdbConfig, fallback: string = "w342") => {
 export const buildImageUrl = (
   cfg: TmdbConfig,
   filePath?: string,
-  size?: string
+  size?: string,
 ) => {
   const fallback = "/cinema.jpg";
   if (!filePath) return fallback;
@@ -59,7 +59,7 @@ const getYear = (date?: string) => (date ? date.slice(0, 4) : "N/A");
 
 export const mapTmdbSummary = (
   w: TmdbMovieSummaryWire,
-  cfg: TmdbConfig
+  cfg: TmdbConfig,
 ): MovieSummary => ({
   id: w.id,
   title: getTitle(w),
@@ -73,7 +73,7 @@ export const mapTmdbSummary = (
 
 export const mapTmdbDetail = (
   w: TmdbMovieDetailWire,
-  cfg: TmdbConfig
+  cfg: TmdbConfig,
 ): MovieDetail => {
   return {
     id: w.id,
@@ -83,7 +83,7 @@ export const mapTmdbDetail = (
     backdropUrl: buildImageUrl(cfg, w.backdrop_path, "w1280"),
     rating: w.vote_average,
     overview: w.overview,
-    genres: w.genres.map((g) => g.id),
+    genres: (w.genres ?? []).map((g) => g.id),
     duration: w.runtime,
     spokenLanguage: w.spoken_languages,
     budget: w.budget,
@@ -94,7 +94,7 @@ export const mapTmdbDetail = (
 
 export const mapTmdbTvDetail = (
   w: TmdbTvDetailWire,
-  cfg: TmdbConfig
+  cfg: TmdbConfig,
 ): TvDetail => {
   return {
     id: w.id,
@@ -114,7 +114,7 @@ export const mapTmdbTvDetail = (
 
 export const mapTmdbCredit = (
   w: TmdbCreditWire,
-  cfg: TmdbConfig
+  cfg: TmdbConfig,
 ): TmdbCredit => {
   const cast = w.cast.map((e) => ({
     id: e.id,
@@ -133,7 +133,7 @@ export const mapTmdbCredit = (
         profileUrl: buildImageUrl(
           cfg,
           directorWire.profile_path ?? undefined,
-          "w185"
+          "w185",
         ),
       }
     : undefined;
@@ -146,7 +146,7 @@ export const mapTmdbCredit = (
 
 export const mapTmdbReview = (
   w: TmdbReviewWire,
-  cfg: TmdbConfig
+  cfg: TmdbConfig,
 ): TmdbMovieReview => {
   return {
     name: w.author_details.name,
@@ -181,7 +181,7 @@ export const getJobTitleFromDepartment = (department?: string | null) => {
 
 export const mapSearchMovie = (
   rawSearchMovie: RawSearchMovie,
-  config: TmdbConfig
+  config: TmdbConfig,
 ): SearchMovie => {
   return {
     title: rawSearchMovie.title || rawSearchMovie.original_name,
@@ -197,7 +197,7 @@ export const mapSearchMovie = (
 
 export const mapSearchPerson = (
   rawSearchPerson: RawSearchPerson,
-  config: TmdbConfig
+  config: TmdbConfig,
 ): SearchPerson => {
   return {
     name: rawSearchPerson.name,
@@ -215,7 +215,7 @@ export const mapMovieGenres = (genreId: number) => {
 
 export const mapSearchTv = (
   rawSearchTv: RawSearchTv,
-  config: TmdbConfig
+  config: TmdbConfig,
 ): SearchTv => {
   return {
     name: rawSearchTv.name || rawSearchTv.original_name,
@@ -230,7 +230,7 @@ export const mapSearchTv = (
 
 export const mapTmdbPerson = (
   personDetailWire: PersonDetailWire,
-  config: TmdbConfig
+  config: TmdbConfig,
 ): PersonDetail => {
   return {
     ...personDetailWire,
