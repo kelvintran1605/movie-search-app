@@ -6,6 +6,7 @@ import {
   FaArrowAltCircleLeft as PrevArrow,
 } from "react-icons/fa";
 import { IoStar as StarIcon } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 const ReviewCarousel = ({ reviews }: { reviews: TmdbMovieReview[] }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -42,9 +43,10 @@ const ReviewCarousel = ({ reviews }: { reviews: TmdbMovieReview[] }) => {
                 No review yet.
               </div>
             ) : (
-              reviews.map((review, i) => (
-                <div
-                  key={i}
+              reviews.map((review) => (
+                <Link
+                  to={`/review/${review.id}`}
+                  key={review.id}
                   className="tracking-wider shrink-0 basis-90 h-50 flex flex-col gap-4 p-3 px-5 cursor-pointer duration-150 rounded-xl
                   bg-slate-100 border border-slate-200 hover:border-slate-300
                   dark:bg-white/15 dark:border-transparent dark:hover:border-white/70"
@@ -77,7 +79,7 @@ const ReviewCarousel = ({ reviews }: { reviews: TmdbMovieReview[] }) => {
                   <div className="line-clamp-4 text-slate-700 dark:text-white/80">
                     {review.content}
                   </div>
-                </div>
+                </Link>
               ))
             )}
           </div>

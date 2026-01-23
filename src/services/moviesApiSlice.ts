@@ -4,6 +4,7 @@ import type {
   TmdbCreditWire,
   TmdbMovieDetailWire,
   TmdbReviewResponse,
+  TmdbReviewWire,
   TmdbSearchResponse,
 } from "@/types/tmdb.wire";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -33,7 +34,7 @@ export const moviesApiSlice = createApi({
     baseUrl: "https://api.themoviedb.org/3",
   }),
   endpoints: (build) => ({
-    // Get all popular movies
+    // Get all discover movies
     getPopular: build.query({
       query: ({
         page = 1,
@@ -56,6 +57,7 @@ export const moviesApiSlice = createApi({
         };
       },
     }),
+
     // Get all languages provided
     getAllLanguages: build.query<Language[], void>({
       query: () =>
@@ -86,6 +88,14 @@ export const moviesApiSlice = createApi({
       },
     }),
 
+    getReviewDetail: build.query({
+      query: (reviewId: string) =>
+        `/review/${reviewId}?api_key=${import.meta.env.VITE_TMDB_KEY}`,
+      transformResponse: (res: TmdbReviewWire) => {
+        return mapTmdbReview(res, config);
+      },
+    }),
+
     // Get reviews for a specific movie
     getReviews: build.query({
       query: (movieId: number) =>
@@ -95,10 +105,37 @@ export const moviesApiSlice = createApi({
       },
     }),
 
+    // Get upcoming movies
+    getUpcomingMovies: build.query({
+      query: ({ page = 1 }: { page: number }) => {
+        return `/movie/upcoming?page=${page}&api_key=${import.meta.env.VITE_TMDB_KEY}`;
+      },
+      transformResponse: (res: TmdbSearchResponse) => {
+        const movies = res.results.map((item) => mapTmdbSummary(item, config));
+        return {
+          movies,
+          totalPages: res.total_pages,
+        };
+      },
+    }),
+
     // Get Now Playing Query
     getNowPlaying: build.query({
       query: ({ page = 1 }: { page: number }) =>
         `movie/now_playing?page=${page}&api_key=${import.meta.env.VITE_TMDB_KEY}`,
+      transformResponse: (res: TmdbSearchResponse) => {
+        const movies = res.results.map((item) => mapTmdbSummary(item, config));
+        return {
+          movies,
+          totalPages: res.total_pages,
+        };
+      },
+    }),
+
+    // Get top rated movie query
+    getTopRatedMovie: build.query({
+      query: ({ page = 1 }: { page: number }) =>
+        `movie/top_rated?page=${page}&api_key=${import.meta.env.VITE_TMDB_KEY}`,
       transformResponse: (res: TmdbSearchResponse) => {
         const movies = res.results.map((item) => mapTmdbSummary(item, config));
         return {
@@ -194,6 +231,8 @@ export const moviesApiSlice = createApi({
 });
 
 export const {
+  useGetTopRatedMovieQuery,
+  useGetUpcomingMoviesQuery,
   useGetPopularQuery,
   useGetAllLanguagesQuery,
   useGetMovieDetailQuery,
@@ -203,4 +242,5 @@ export const {
   useGetSearchMovieQuery,
   useGetTrailerQuery,
   useGetTrendingMoviesQuery,
+  useGetReviewDetailQuery,
 } = moviesApiSlice;

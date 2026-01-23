@@ -55,7 +55,7 @@ const getTitle = (w: TmdbMovieSummaryWire) => {
   return w.name ?? w.title ?? "";
 };
 
-const getYear = (date?: string) => (date ? date.slice(0, 4) : "N/A");
+export const getYear = (date?: string) => (date ? date.slice(0, 4) : "N/A");
 
 export const mapTmdbSummary = (
   w: TmdbMovieSummaryWire,
@@ -149,6 +149,7 @@ export const mapTmdbReview = (
   cfg: TmdbConfig,
 ): TmdbMovieReview => {
   return {
+    id: w.id,
     name: w.author_details.name,
     profileUrl: buildImageUrl(cfg, w.author_details.avatar_path, "w92"),
     rating: w.author_details.rating,

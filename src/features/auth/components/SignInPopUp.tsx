@@ -5,14 +5,10 @@ import { FaDiscord, FaEyeSlash, FaEye } from "react-icons/fa";
 import { supabase } from "@/lib/supabase";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import toast from "react-hot-toast";
+import { useUI } from "@/context/UiContext";
 
-const SignInPopUp = ({
-  onToggleSignIn,
-  onToggleSignUp,
-}: {
-  onToggleSignIn: () => void;
-  onToggleSignUp: () => void;
-}) => {
+const SignInPopUp = () => {
+  const { openSignIn, openSignUp, closeSignIn, closeSignUp } = useUI();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
@@ -77,7 +73,7 @@ const SignInPopUp = ({
         return;
       }
       toast.success("Signed in successfully");
-      onToggleSignIn();
+      closeSignIn();
     } finally {
       setLoading(false);
     }
@@ -97,8 +93,9 @@ const SignInPopUp = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Overlay */}
       <div
-        onClick={onToggleSignIn}
+        onClick={closeSignIn}
         className="bg-black/40 fade absolute w-full h-full"
       ></div>
       {/* Card */}
@@ -117,7 +114,7 @@ const SignInPopUp = ({
           className="flex flex-col w-full lg:w-1/2 p-8 md:p-12 overflow-y-auto"
         >
           <CloseButton
-            onClick={onToggleSignIn}
+            onClick={closeSignIn}
             className="absolute top-3 right-3 text-2xl text-gray-500 hover:text-gray-400 cursor-pointer"
           />
 
@@ -227,8 +224,8 @@ const SignInPopUp = ({
             Needs an account?
             <button
               onClick={() => {
-                onToggleSignIn();
-                onToggleSignUp();
+                closeSignIn();
+                openSignUp();
               }}
               type="button"
               className="text-[#60A5FA] font-semibold ml-1 cursor-pointer hover:underline"

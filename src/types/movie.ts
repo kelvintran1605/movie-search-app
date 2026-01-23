@@ -51,6 +51,7 @@ export type TmdbCredit = {
 };
 
 export type TmdbMovieReview = {
+  id: number;
   name: string;
   profileUrl: string;
   rating: number;

@@ -14,16 +14,8 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdArrowDropdownCircle as DropDownArrow } from "react-icons/io";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase.ts";
-
-const NavBar = ({
-  onToggleSideBar,
-  onToggleSignUp,
-  onToggleSignIn,
-}: {
-  onToggleSideBar: () => void;
-  onToggleSignUp: () => void;
-  onToggleSignIn: () => void;
-}) => {
+import { useUI } from "@/context/UiContext.ts";
+const NavBar = ({ onToggleSideBar }: { onToggleSideBar: () => void }) => {
   const triggerClass = `
     bg-transparent
     hover:bg-gray-200
@@ -62,6 +54,16 @@ const NavBar = ({
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  // Get the SignIn/SignUp popup context
+  const {
+    isSignInOpen,
+    isSignUpOpen,
+    openSignIn,
+    closeSignIn,
+    openSignUp,
+    closeSignUp,
+    closeAll,
+  } = useUI();
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
 
@@ -110,7 +112,7 @@ const NavBar = ({
 
               <NavigationMenuContent className="bg-white text-black dark:bg-[#0D0D0D] dark:text-white rounded-xl shadow-xl border border-gray-200 dark:border-white/10 p-2 min-w-[200px]">
                 <NavigationMenuLink className={dropLink} asChild>
-                  <Link to="/movies/popular">Popular</Link>
+                  <Link to="/movies/popular">Discover</Link>
                 </NavigationMenuLink>
 
                 <NavigationMenuLink className={dropLink} asChild>
@@ -134,7 +136,7 @@ const NavBar = ({
 
               <NavigationMenuContent className="bg-white text-black dark:bg-[#0D0D0D] dark:text-white rounded-xl shadow-xl border border-gray-200 dark:border-white/10 p-2 min-w-[200px]">
                 <NavigationMenuLink className={dropLink} asChild>
-                  <Link to="/tv/popular">Popular</Link>
+                  <Link to="/tv/discover">Discover</Link>
                 </NavigationMenuLink>
 
                 <NavigationMenuLink className={dropLink} asChild>
@@ -193,14 +195,14 @@ const NavBar = ({
             ) : (
               <>
                 <button
-                  onClick={onToggleSignIn}
+                  onClick={openSignIn}
                   className="font-bold hover:underline cursor-pointer text-black dark:text-white"
                 >
                   Sign In
                 </button>
 
                 <button
-                  onClick={onToggleSignUp}
+                  onClick={openSignUp}
                   className="px-5 py-1 bg-linear-to-r from-[#3B82F6] to-[#60A5FA] text-white font-semibold rounded-xl text-base
               shadow-md shadow-blue-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/30 hover:scale-[1.04] cursor-pointer"
                 >

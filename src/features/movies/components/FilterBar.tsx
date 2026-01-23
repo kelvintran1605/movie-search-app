@@ -37,12 +37,14 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
   const [yearRange, setYearRange] = useState<[number, number]>([2000, 2025]);
 
   useEffect(() => {
+    const raw = searchParams.get("genreIds") ?? "";
     setDraftGenreIds(
-      searchParams
-        .get("genreIds")
-        ?.split(",")
+      raw
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
         .map(Number)
-        .filter(Number.isFinite) || [],
+        .filter(Number.isFinite),
     );
 
     setLanguage(searchParams.get("language") || "");

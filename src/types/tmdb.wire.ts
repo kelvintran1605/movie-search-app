@@ -84,6 +84,7 @@ export type TmdbCreditWire = {
 };
 
 export type TmdbReviewWire = {
+  id: number;
   author_details: {
     name: string;
     avatar_path: string;

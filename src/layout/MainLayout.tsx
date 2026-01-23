@@ -6,16 +6,17 @@ import SideBar from "@/components/layout/SideBar";
 import SignUpPopUp from "@/features/auth/components/SignUpPopUp";
 import SignInPopUp from "@/features/auth/components/SignInPopUp";
 import { Toaster } from "react-hot-toast";
+import { useUI } from "@/context/UiContext";
 
 const MainLayout = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [isSignUpOpen, setSignUpOpen] = useState(false);
-  const [isSignInOpen, setSignInOpen] = useState(false);
+  // const [isSignUpOpen, setSignUpOpen] = useState(false);
+  // const [isSignInOpen, setSignInOpen] = useState(false);
 
   const handleToggleSideBar = () => setIsSideBarOpen((prev) => !prev);
-  const handleToggleSignUp = () => setSignUpOpen((prev) => !prev);
-  const handleToggleSignIn = () => setSignInOpen((prev) => !prev);
-
+  // const handleToggleSignUp = () => setSignUpOpen((prev) => !prev);
+  // const handleToggleSignIn = () => setSignInOpen((prev) => !prev);
+  const { isSignInOpen, isSignUpOpen, openSignIn, openSignUp } = useUI();
   return (
     <div className="min-h-screen flex flex-col bg-white text-slate-900 dark:bg-[#0D0D0D] dark:text-white">
       <Toaster
@@ -35,13 +36,9 @@ const MainLayout = () => {
         }}
       />
 
-      <Header
-        onToggleSignIn={handleToggleSignIn}
-        onToggleSignUp={handleToggleSignUp}
-        onToggleSideBar={handleToggleSideBar}
-      />
+      <Header onToggleSideBar={handleToggleSideBar} />
 
-      {isSideBarOpen && (
+      {/* {isSideBarOpen && (
         <>
           <div
             onClick={handleToggleSideBar}
@@ -53,21 +50,11 @@ const MainLayout = () => {
             onToggleSignIn={handleToggleSignIn}
           />
         </>
-      )}
+      )} */}
 
-      {isSignUpOpen && (
-        <SignUpPopUp
-          onToggleSignIn={handleToggleSignIn}
-          onToggleSignUp={handleToggleSignUp}
-        />
-      )}
+      {isSignUpOpen && <SignUpPopUp />}
 
-      {isSignInOpen && (
-        <SignInPopUp
-          onToggleSignUp={handleToggleSignUp}
-          onToggleSignIn={handleToggleSignIn}
-        />
-      )}
+      {isSignInOpen && <SignInPopUp />}
 
       <main className="flex-1 bg-slate-50 dark:bg-[#0D0D0D]">
         <Outlet />

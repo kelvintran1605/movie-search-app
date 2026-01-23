@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import PaginationBar from "../components/PaginationBar";
-import { useGetNowPlayingQuery } from "@/services/moviesApiSlice";
+import {
+  useGetNowPlayingQuery,
+  useGetUpcomingMoviesQuery,
+} from "@/services/moviesApiSlice";
 import MovieCard from "../components/MovieCard";
 import Skeleton from "react-loading-skeleton";
 
-const NowPlaying = () => {
+const UpcomingMovies = () => {
   const [page, setPage] = useState(1);
-  const { isFetching, data } = useGetNowPlayingQuery({ page });
+  const { isFetching, data } = useGetUpcomingMoviesQuery({ page });
 
   return (
     <div className="w-full flex flex-col items-center text-xl px-4 py-8 sm:px-6 sm:py-10 lg:px-12 lg:py-12 bg-slate-50 text-slate-900 dark:bg-[#0D0D0D] dark:text-white">
       <h1 className="font-bold text-3xl sm:text-4xl mb-4 sm:mb-5">
-        Now Playing
+        Upcoming Movies
       </h1>
 
       <div className="w-full max-w-4xl text-base mb-8 sm:mb-10 font-semibold text-slate-600 dark:text-gray-300 text-center">
@@ -53,4 +56,4 @@ const NowPlaying = () => {
   );
 };
 
-export default NowPlaying;
+export default UpcomingMovies;

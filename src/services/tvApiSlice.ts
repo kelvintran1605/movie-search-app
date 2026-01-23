@@ -1,7 +1,12 @@
-import { mapTmdbReview, mapTmdbTvDetail } from "@/lib/tmdb.mapper";
+import {
+  mapTmdbReview,
+  mapTmdbSummary,
+  mapTmdbTvDetail,
+} from "@/lib/tmdb.mapper";
 import type {
   TmdbConfig,
   TmdbReviewResponse,
+  TmdbSearchResponse,
   TmdbTvDetailWire,
 } from "@/types/tmdb.wire";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -44,6 +49,30 @@ export const tvApiSlice = createApi({
         return res.results.map((review) => mapTmdbReview(review, config));
       },
     }),
+
+    // Get all discover Tvs
+    getDiscoverTvs: build.query({
+      query: ({
+        page = 1,
+        genreIds = [],
+        language = "",
+        minYear,
+        maxYear,
+        sortBy,
+      }) => {
+        const withGenres =
+          genreIds.length > 0 ? `&with_genres=${genreIds.join("|")}` : "";
+
+        return `/discover/tv?page=${page}&api_key=${import.meta.env.VITE_TMDB_KEY}${withGenres}&language=${language}&primary_release_date.gte=${minYear}-01-01&primary_release_date.lte=${maxYear}-12-31&sort_by=${sortBy}`;
+      },
+      transformResponse: (res: TmdbSearchResponse) => {
+        const tvs = res.results.map((item) => mapTmdbSummary(item, config));
+        return {
+          tvs,
+          totalPages: res.total_pages,
+        };
+      },
+    }),
   }),
 });
 
@@ -51,4 +80,5 @@ export const {
   useGetTvDetailQuery,
   useGetTvCreditQuery,
   useGetTvReviewsQuery,
+  useGetDiscoverTvsQuery,
 } = tvApiSlice;

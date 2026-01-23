@@ -6,14 +6,17 @@ import { store } from "./app/store.ts";
 import { BrowserRouter } from "react-router-dom";
 import AuthProvider from "./context/AuthProvider.tsx";
 import ThemeProvider from "./context/ThemeProvider.tsx";
+import UIProvider from "./context/UIProvider.tsx";
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider>
-          <App />
+          <UIProvider>
+            <App />
+          </UIProvider>
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
-  </Provider>
+  </Provider>,
 );

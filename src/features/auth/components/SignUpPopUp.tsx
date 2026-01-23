@@ -1,16 +1,12 @@
 import { FcGoogle } from "react-icons/fc";
-import { FaApple, FaDiscord, FaEyeSlash, FaEye } from "react-icons/fa";
+import { FaDiscord, FaEyeSlash, FaEye } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { IoMdClose as CloseButton } from "react-icons/io";
 import { supabase } from "@/lib/supabase";
+import { useUI } from "@/context/UiContext";
 
-const SignUpPopUp = ({
-  onToggleSignUp,
-  onToggleSignIn,
-}: {
-  onToggleSignUp: () => void;
-  onToggleSignIn: () => void;
-}) => {
+const SignUpPopUp = () => {
+  const { openSignIn, openSignUp, closeSignIn, closeSignUp } = useUI();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
@@ -81,13 +77,13 @@ const SignUpPopUp = ({
 
     if (!data.session) {
       setErrors(
-        "Check your email to confirm your account. If you already have an account, try signing in or resetting your password."
+        "Check your email to confirm your account. If you already have an account, try signing in or resetting your password.",
       );
       return;
     }
 
     setTimeout(() => {
-      onToggleSignUp();
+      closeSignUp();
     }, 500);
   };
   useEffect(() => {
@@ -105,7 +101,7 @@ const SignUpPopUp = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
-        onClick={onToggleSignUp}
+        onClick={closeSignUp}
         className="bg-black/40 fade absolute w-full h-full"
       ></div>
       {/* Card */}
@@ -124,7 +120,7 @@ const SignUpPopUp = ({
           className="flex flex-col w-full lg:w-1/2 p-8 md:p-12 overflow-y-auto"
         >
           <CloseButton
-            onClick={onToggleSignUp}
+            onClick={closeSignUp}
             className="absolute top-3 right-3 text-2xl text-gray-500 hover:text-gray-400 cursor-pointer"
           />
 
@@ -259,8 +255,8 @@ const SignUpPopUp = ({
             Already have an account?{" "}
             <button
               onClick={() => {
-                onToggleSignIn();
-                onToggleSignUp();
+                openSignIn();
+                closeSignUp();
               }}
               type="button"
               className="text-[#60A5FA] font-semibold cursor-pointer hover:underline"

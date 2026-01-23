@@ -7,30 +7,30 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSearchParams, Link } from "react-router-dom";
 import type { GenreOption } from "@/types/movie";
+import { useGetDiscoverTvsQuery } from "@/services/tvApiSlice";
 
-const PopularMovies = () => {
+const DiscoverTvs = () => {
   const [page, setPage] = useState(1);
   const [searchParams] = useSearchParams();
 
-  const movieGenres: GenreOption[] = useMemo(
-    () => [
-      { name: "Action", value: 28 },
-      { name: "Adventure", value: 12 },
-      { name: "Animation", value: 16 },
-      { name: "Comedy", value: 35 },
-      { name: "Crime", value: 80 },
-      { name: "Documentary", value: 99 },
-      { name: "Drama", value: 18 },
-      { name: "Fantasy", value: 14 },
-      { name: "Horror", value: 27 },
-      { name: "Mystery", value: 9648 },
-      { name: "Romance", value: 10749 },
-      { name: "Sci-Fi", value: 878 },
-      { name: "Thriller", value: 53 },
-      { name: "Western", value: 37 },
-    ],
-    []
-  );
+  const tvGenres: GenreOption[] = [
+    { name: "Action & Adventure", value: 10759 },
+    { name: "Animation", value: 16 },
+    { name: "Comedy", value: 35 },
+    { name: "Crime", value: 80 },
+    { name: "Documentary", value: 99 },
+    { name: "Drama", value: 18 },
+    { name: "Family", value: 10751 },
+    { name: "Kids", value: 10762 },
+    { name: "Mystery", value: 9648 },
+    { name: "News", value: 10763 },
+    { name: "Reality", value: 10764 },
+    { name: "Sci-Fi & Fantasy", value: 10765 },
+    { name: "Soap", value: 10766 },
+    { name: "Talk", value: 10767 },
+    { name: "War & Politics", value: 10768 },
+    { name: "Western", value: 37 },
+  ];
 
   const filters = useMemo(() => {
     const genreIds =
@@ -48,7 +48,7 @@ const PopularMovies = () => {
     };
   }, [searchParams]);
 
-  const { data, isFetching } = useGetPopularQuery({
+  const { data, isFetching } = useGetDiscoverTvsQuery({
     page,
     genreIds: filters.genreIds,
     language: filters.language,
@@ -60,12 +60,12 @@ const PopularMovies = () => {
   return (
     <div className="w-full flex flex-col items-center text-xl bg-gray-100 text-black dark:bg-[#0D0D0D] dark:text-white px-4 py-8 sm:px-6 sm:py-10 lg:px-12 lg:py-12">
       <h1 className="font-bold text-2xl sm:text-3xl mb-6 sm:mb-10 text-black dark:text-white">
-        Popular Movies
+        Discover TVs
       </h1>
 
       <div className="flex w-full flex-col lg:flex-row gap-6 lg:gap-8">
         <div className="w-full lg:w-[20%]">
-          <FilterBar movieGenres={movieGenres} />
+          <FilterBar movieGenres={tvGenres} />
         </div>
 
         <div className="w-full lg:w-[80%]">
@@ -96,12 +96,8 @@ const PopularMovies = () => {
                     />
                   </div>
                 ))
-              : data?.movies.map((item) => (
-                  <Link
-                    key={item.id}
-                    to={`/movie/${item.id}`}
-                    className="w-full"
-                  >
+              : data?.tvs.map((item) => (
+                  <Link key={item.id} to={`/tv/${item.id}`} className="w-full">
                     <MovieCard
                       imgURL={item.imgUrl}
                       rating={item.rating}
@@ -125,4 +121,4 @@ const PopularMovies = () => {
   );
 };
 
-export default PopularMovies;
+export default DiscoverTvs;
