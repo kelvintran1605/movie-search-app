@@ -77,13 +77,13 @@ const AccountSettings = () => {
 
       <div className="flex flex-col items-start w-full max-w-4xl gap-5">
         <h1 className="font-bold text-2xl sm:text-3xl">Account Settings</h1>
-        <div className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+        <div className="text-black/70 dark:text-white/70 text-sm sm:text-base">
           Manage your profile, security and preferences
         </div>
 
         <div className="flex flex-col p-5 sm:p-8 gap-2 bg-white dark:bg-[#1A1A1A] w-full mt-6 sm:mt-8 rounded-xl">
           <h2 className="font-bold text-lg sm:text-xl">Profile</h2>
-          <div className="text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">
+          <div className="text-black/70 dark:text-white/70 mb-6 sm:mb-8 text-sm sm:text-base">
             Personal information linked to your account
           </div>
 
@@ -96,14 +96,14 @@ const AccountSettings = () => {
             />
 
             <div className="flex flex-col gap-1 w-full">
-              <h3 className="font-bold text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+              <h3 className="font-bold text-black/70 dark:text-white/70 text-sm sm:text-base">
                 Display name
               </h3>
               <div className="text-base sm:text-lg break-words">
                 {user?.user_metadata?.name || user?.email || "User"}
               </div>
 
-              <h3 className="font-bold text-gray-600 dark:text-gray-400 mt-4 sm:mt-5 text-sm sm:text-base">
+              <h3 className="font-bold text-black/70 dark:text-white/70 mt-4 sm:mt-5 text-sm sm:text-base">
                 Email Address
               </h3>
               <div className="flex items-center gap-2 text-sm sm:text-base break-all">
@@ -115,7 +115,7 @@ const AccountSettings = () => {
 
         <div className="flex flex-col p-5 sm:p-8 gap-2 bg-white dark:bg-[#1A1A1A] w-full mt-6 sm:mt-8 rounded-xl">
           <h2 className="font-bold text-lg sm:text-xl">Security</h2>
-          <div className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+          <div className="text-black/70 dark:text-white/70 text-sm sm:text-base">
             Manage how you sign in to your account
           </div>
 
@@ -127,16 +127,14 @@ const AccountSettings = () => {
             <div className="flex flex-col">
               <div className="text-base sm:text-lg">Connected via</div>
               <ul className="mt-1">
-                {providers?.map((provider) => {
-                  return (
-                    <li
-                      className="text-gray-600 dark:text-gray-400 list-disc ml-4 text-sm sm:text-base"
-                      key={provider}
-                    >
-                      {capitalize(provider)}
-                    </li>
-                  );
-                })}
+                {providers?.map((provider) => (
+                  <li
+                    className="text-black/70 dark:text-white/70 list-disc ml-4 text-sm sm:text-base"
+                    key={provider}
+                  >
+                    {capitalize(provider)}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -149,7 +147,7 @@ const AccountSettings = () => {
 
               <div className="flex flex-col">
                 <div className="text-base sm:text-lg">Password</div>
-                <div className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                <div className="text-black/70 dark:text-white/70 text-sm sm:text-base">
                   Add/Change Password
                 </div>
               </div>
@@ -192,7 +190,7 @@ const AccountSettings = () => {
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center bg-yellow-100 dark:bg-yellow-500/10 p-4 sm:p-5 rounded-md mt-4">
                 <ExclamationIcon className="text-yellow-400 shrink-0" />
                 <div className="text-sm sm:text-base">
-                  <div className="text-yellow-600 dark:text-yellow-500">
+                  <div className="text-yellow-700 dark:text-yellow-500">
                     You're currently signed in with Google only
                   </div>
                   <div className="text-yellow-700/70 dark:text-yellow-600/70">
@@ -205,11 +203,11 @@ const AccountSettings = () => {
 
         <div className="flex flex-col p-5 sm:p-8 gap-3 bg-white dark:bg-[#1A1A1A] w-full mt-6 sm:mt-8 rounded-xl">
           <h2 className="font-bold text-lg sm:text-xl">Preferences</h2>
-          <div className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+          <div className="text-black/70 dark:text-white/70 text-sm sm:text-base">
             Customize your experience
           </div>
 
-          <div className="text-gray-600 dark:text-gray-400 mt-4 text-sm sm:text-base">
+          <div className="text-black/70 dark:text-white/70 mt-4 text-sm sm:text-base">
             Theme
           </div>
 
@@ -251,12 +249,12 @@ const AccountSettings = () => {
             </div>
           </div>
 
-          <div className="text-gray-600 dark:text-gray-400 mt-4 text-sm sm:text-base">
+          <div className="text-black/70 dark:text-white/70 mt-4 text-sm sm:text-base">
             Language
           </div>
           <div className="flex items-center justify-between gap-2 text-sm sm:text-base border border-gray-300 dark:border-gray-500 p-3 rounded-md bg-white dark:bg-transparent">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-              <LanguageIcon className="text-xl text-gray-500 dark:text-gray-400 shrink-0" />
+              <LanguageIcon className="text-xl text-black/70 dark:text-white/70 shrink-0" />
               <div className="font-semibold truncate">English</div>
             </div>
 

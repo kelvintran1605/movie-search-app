@@ -1,4 +1,5 @@
 import { FaRegCopyright } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -19,21 +20,36 @@ const Footer = () => {
               Explore
             </div>
             <div className="grid gap-2 text-sm">
-              <div className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150">
+              <Link
+                to="/"
+                className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150"
+              >
                 Home
-              </div>
-              <div className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150">
+              </Link>
+              <Link
+                to="/movies/now-playing"
+                className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150"
+              >
                 Now playing
-              </div>
-              <div className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150">
-                Popular
-              </div>
-              <div className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150">
+              </Link>
+              <Link
+                to="/movies/discover"
+                className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150"
+              >
+                Discover
+              </Link>
+              <Link
+                to="/movies/top-rated"
+                className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150"
+              >
                 Top Rated
-              </div>
-              <div className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150">
+              </Link>
+              <Link
+                to="/watchlist"
+                className="text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white cursor-pointer duration-150"
+              >
                 Watchlist
-              </div>
+              </Link>
             </div>
           </div>
 

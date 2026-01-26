@@ -35,9 +35,13 @@ const FeaturedHero = ({ movies }: { movies: MovieDetail[] }) => {
   }, [emblaApi]);
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-12 py-6 sm:py-8 flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-      {/* Left Column */}
-      <div className="text-slate-900 dark:text-white w-full lg:w-3/5">
+    <div
+      className="w-full px-4 sm:px-6 lg:px-12 py-6 sm:py-8
+      bg-white text-slate-900
+      dark:bg-[#0D0D0D] dark:text-white
+      flex flex-col lg:flex-row gap-6 lg:gap-8 items-start"
+    >
+      <div className="w-full lg:w-3/5">
         <div className="relative">
           <PrevArrow
             onClick={scrollPrev}
@@ -68,7 +72,6 @@ const FeaturedHero = ({ movies }: { movies: MovieDetail[] }) => {
         </div>
       </div>
 
-      {/* Right Column */}
       <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 items-center w-full lg:w-2/5">
         <div className="font-semibold text-[#60A5FA] text-xl sm:text-2xl mt-2 text-left w-full">
           Up next
@@ -79,7 +82,11 @@ const FeaturedHero = ({ movies }: { movies: MovieDetail[] }) => {
             <Link
               key={e?.id}
               to={`/movie/${e?.id}`}
-              className="flex gap-3 items-center cursor-pointer w-full sm:w-1/2 lg:w-full"
+              className="flex gap-3 items-center cursor-pointer w-full sm:w-1/2 lg:w-full
+              rounded-xl p-2
+              hover:bg-slate-100
+              dark:hover:bg-white/5
+              duration-150"
             >
               <img
                 src={e?.imgUrl || ""}
@@ -89,11 +96,13 @@ const FeaturedHero = ({ movies }: { movies: MovieDetail[] }) => {
                 <div className="text-base sm:text-xl hover:text-blue-400 duration-150 truncate">
                   {e?.title}
                 </div>
-                <div className="text-gray-300 text-sm sm:text-base">
+                <div className="text-slate-500 dark:text-gray-300 text-sm sm:text-base">
                   Watch the trailer
                 </div>
-                <div className="text-sm sm:text-base">{e?.year}</div>
-                <div className="flex items-center gap-2 text-sm sm:text-base">
+                <div className="text-slate-700 dark:text-slate-200 text-sm sm:text-base">
+                  {e?.year}
+                </div>
+                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 text-sm sm:text-base">
                   <AiOutlineLike /> {e?.rating.toFixed(1)}/10
                 </div>
               </div>
@@ -123,15 +132,18 @@ const FeaturedCard = ({
         backgroundImage: `url(${backdropUrl})`,
       }}
       className="relative hero shrink-0 flex items-end bg-base-200
-      h-[420px] sm:h-[520px] lg:h-140 w-full cursor-pointer hover:brightness-95 duration-150"
+      h-[420px] sm:h-[520px] lg:h-148 w-full cursor-pointer hover:brightness-95 duration-150
+      rounded-2xl overflow-hidden"
     >
       <div className="absolute bg-linear-to-t from-black via-black/20 to-transparent inset-0 w-full h-full"></div>
 
       <div className="hero-content flex-col lg:flex-row lg:items-end">
         <img src={url} className="w-28 sm:w-36 lg:w-45 rounded-lg shadow-2xl" />
         <div className="pb-2">
-          <h1 className="text-2xl sm:text-4xl font-semibold">{name}</h1>
-          <div className="text-gray-300 text-base sm:text-xl">
+          <h1 className="text-2xl sm:text-4xl font-semibold text-white">
+            {name}
+          </h1>
+          <div className="text-gray-200 text-base sm:text-xl">
             Watch the Trailer
           </div>
           <div></div>

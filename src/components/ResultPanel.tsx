@@ -24,10 +24,11 @@ const ResultPanel = ({
       {[...results]
         .sort((a, b) => b.popularity - a.popularity)
         .slice(0, 7)
-        .map((result) => {
+        .map((result, index) => {
           const genres = result?.genres?.map((genre) => mapMovieGenres(genre));
           return (
             <ResultItem
+              index={index}
               onPanelOpen={onPanelOpen}
               type={result.media_type}
               id={result.id}
@@ -40,12 +41,24 @@ const ResultPanel = ({
             />
           );
         })}
-      <div
+      <button
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            navigate(`/search?query=${query}&option=${option}&page=1`);
+          }
+
+          if (e.key === "Escape") {
+            e.preventDefault();
+            onPanelOpen(false);
+          }
+        }}
+        data-result-all
+        type="button"
         onMouseDown={handleAllResults}
-        className="p-2 hover:bg-gray-600/20 duration-150 cursor-pointer"
+        className="p-2 hover:bg-gray-600/20 duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
       >
         See all results...
-      </div>
+      </button>
     </div>
   );
 };

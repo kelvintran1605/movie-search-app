@@ -1,34 +1,18 @@
-import { useState } from "react";
 import { AiOutlineHome } from "react-icons/ai";
 import { PiSignInBold } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import SignInPopUp from "./SignInPopUp";
+import { useUI } from "@/context/UiContext";
+import SignUpPopUp from "./SignUpPopUp";
 
 const NotAuthenticated = () => {
-  const [isSignInOpen, setIsSignInOpen] = useState(false);
-  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const { isSignInOpen, isSignUpOpen, openSignIn } = useUI();
 
   return (
     <div className="min-h-screen flex flex-col-reverse lg:flex-row items-center justify-center gap-10 px-6 lg:px-16 bg-white text-black dark:bg-[#0D0D0D] dark:text-white">
-      {isSignInOpen && (
-        <SignInPopUp
-          onToggleSignIn={() => setIsSignInOpen(false)}
-          onToggleSignUp={() => {
-            setIsSignInOpen(false);
-            setIsSignUpOpen(true);
-          }}
-        />
-      )}
+      {isSignInOpen && <SignInPopUp />}
 
-      {isSignUpOpen && (
-        <SignInPopUp
-          onToggleSignIn={() => {
-            setIsSignUpOpen(false);
-            setIsSignInOpen(true);
-          }}
-          onToggleSignUp={() => setIsSignUpOpen((p) => !p)}
-        />
-      )}
+      {isSignUpOpen && <SignUpPopUp />}
 
       <div className="w-full max-w-xl text-center lg:text-left">
         <h2 className="text-3xl sm:text-4xl font-semibold">
@@ -51,7 +35,7 @@ const NotAuthenticated = () => {
           </Link>
 
           <button
-            onClick={() => setIsSignInOpen(true)}
+            onClick={openSignIn}
             className="flex items-center gap-2 w-40 justify-center cursor-pointer border border-gray-300 dark:border-gray-400 p-2 rounded-md px-6 hover:bg-gray-100 dark:hover:bg-gray-800 duration-150"
           >
             <PiSignInBold className="text-xl" /> Sign In

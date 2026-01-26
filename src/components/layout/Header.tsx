@@ -1,10 +1,10 @@
 import NavBar from "./NavBar";
 
-const Header = ({ onToggleSideBar }: { onToggleSideBar: () => void }) => {
+const Header = () => {
   return (
     <header className="relative">
       {/* NavBar */}
-      <NavBar onToggleSideBar={onToggleSideBar} />
+      <NavBar />
     </header>
   );
 };

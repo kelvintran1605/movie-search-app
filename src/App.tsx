@@ -5,7 +5,7 @@ import PopularMovies from "./features/movies/pages/DiscoverMovies";
 import Home from "./features/home/pages/Home";
 import MovieDetail from "./features/movies/pages/MovieDetail";
 import WatchList from "./features/movies/pages/WatchList";
-import NowPlaying from "./features/movies/pages/NowPlaying";
+import NowPlaying from "./features/movies/pages/MovieNowPlaying";
 import AccountSettings from "./features/account/pages/AccountSettings";
 import TvDetail from "./features/movies/pages/TvDetail";
 import CastDetail from "./features/movies/pages/CastDetail";
@@ -16,6 +16,8 @@ import ReviewDetail from "./features/movies/pages/ReviewDetail";
 import UpcomingMovies from "./features/movies/pages/UpcomingMovies";
 import TopRatedMovies from "./features/movies/pages/TopRatedMovies";
 import DiscoverTvs from "./features/movies/pages/DiscoverTvs";
+import TVNowPlaying from "./features/movies/pages/TVNowPlaying";
+import TopRatedTvs from "./features/movies/pages/TopRatedTvs";
 function App() {
   return (
     <>
@@ -23,7 +25,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
-          <Route path="movies/popular" element={<PopularMovies />}></Route>
+          <Route path="movies/discover" element={<PopularMovies />}></Route>
           <Route path="/tv/:id" element={<TvDetail />} />
           <Route path="movies/now-playing" element={<NowPlaying />} />
           <Route path="person/:id" element={<CastDetail />} />
@@ -32,6 +34,8 @@ function App() {
           <Route path="movies/upcoming" element={<UpcomingMovies />} />
           <Route path="movies/top-rated" element={<TopRatedMovies />} />
           <Route path="tv/discover" element={<DiscoverTvs />} />
+          <Route path="/tv/now-playing" element={<TVNowPlaying />} />
+          <Route path="/tv/top-rated" element={<TopRatedTvs />} />
           <Route
             path="watchlist"
             element={

@@ -25,7 +25,7 @@ const Hero = () => {
             films, and hidden treasures.
           </p>
           <Link
-            to={`/movies/popular`}
+            to={`/movies/discover`}
             className="
                 px-2 py-2 mt-4
                 bg-linear-to-r from-[#3B82F6] to-[#60A5FA]

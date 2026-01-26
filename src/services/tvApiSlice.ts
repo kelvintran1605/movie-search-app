@@ -73,6 +73,31 @@ export const tvApiSlice = createApi({
         };
       },
     }),
+
+    getNowPlayingTv: build.query({
+      query: ({ page = 1 }: { page: number }) =>
+        `tv/on_the_air?page=${page}&api_key=${import.meta.env.VITE_TMDB_KEY}`,
+      transformResponse: (res: TmdbSearchResponse) => {
+        const tvs = res.results.map((item) => mapTmdbSummary(item, config));
+        return {
+          tvs,
+          totalPages: res.total_pages,
+        };
+      },
+    }),
+
+    // Get top rated movie query
+    getTopRatedTv: build.query({
+      query: ({ page = 1 }: { page: number }) =>
+        `tv/top_rated?page=${page}&api_key=${import.meta.env.VITE_TMDB_KEY}`,
+      transformResponse: (res: TmdbSearchResponse) => {
+        const tvs = res.results.map((item) => mapTmdbSummary(item, config));
+        return {
+          tvs,
+          totalPages: res.total_pages,
+        };
+      },
+    }),
   }),
 });
 
@@ -81,4 +106,6 @@ export const {
   useGetTvCreditQuery,
   useGetTvReviewsQuery,
   useGetDiscoverTvsQuery,
+  useGetNowPlayingTvQuery,
+  useGetTopRatedTvQuery,
 } = tvApiSlice;

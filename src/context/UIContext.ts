@@ -1,8 +1,11 @@
 import { createContext, useContext } from "react";
 
 type UIContextType = {
+  isSideBarOpen: boolean;
   isSignInOpen: boolean;
   isSignUpOpen: boolean;
+  openSideBar: () => void;
+  closeSideBar: () => void;
   openSignIn: () => void;
   closeSignIn: () => void;
   openSignUp: () => void;
@@ -11,6 +14,9 @@ type UIContextType = {
 };
 
 export const UIContext = createContext<UIContextType>({
+  isSideBarOpen: false,
+  openSideBar: () => {},
+  closeSideBar: () => {},
   isSignInOpen: false,
   isSignUpOpen: false,
   openSignIn: () => {},
