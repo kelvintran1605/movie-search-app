@@ -5,7 +5,7 @@ import { FaDiscord, FaEyeSlash, FaEye } from "react-icons/fa";
 import { supabase } from "@/lib/supabase";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import toast from "react-hot-toast";
-import { useUI } from "@/context/UiContext";
+import { useUI } from "@/context/UIContext";
 
 const SignInPopUp = () => {
   const { openSignIn, openSignUp, closeSignIn, closeSignUp } = useUI();

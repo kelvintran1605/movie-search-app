@@ -1,16 +1,11 @@
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/context/UIContext";
 import { supabase } from "@/lib/supabase";
+import { useEffect, useRef } from "react";
 import { IoMdClose as CloseButton } from "react-icons/io";
 import { Link } from "react-router-dom";
 
 const SideBar = () => {
-  const { openSignIn, openSignUp, closeSideBar } = useUI();
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    closeSideBar();
-  };
-  const { user, avatarUrl } = useAuth();
   const sideBarSections = [
     {
       group: "Movies",
@@ -31,21 +26,53 @@ const SideBar = () => {
     },
   ];
 
+  // Get UI state
+  const { openSignIn, openSignUp, closeSideBar } = useUI();
+
+  // Get user state
+  const { user, avatarUrl } = useAuth();
+
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    closeSideBar();
+  };
+
+  // Closing sidebar when user clicks esc
+  useEffect(() => {
+    closeBtnRef?.current?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeSideBar();
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [closeSideBar]);
+
   return (
-    <div
+    <nav
+      aria-label="Sidebar menu"
       className="p-10 text-white fixed top-0 left-1/2 -translate-x-1/2 h-dvh w-full bg-[#202629] flex flex-col z-50
     md:w-[50%] md:h-[90vh] md:top-[5vh] rounded-md"
     >
-      <CloseButton
+      <button
+        type="button"
         onClick={closeSideBar}
-        className="absolute top-3 right-3 text-2xl text-gray-500 hover:text-gray-400 cursor-pointer hover"
-      />
+        aria-label="Close menu"
+        className="absolute top-3 right-3 text-gray-500 hover:text-gray-400
+             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
+      >
+        <CloseButton className="text-2xl" />
+      </button>
 
       {/* Buttons */}
       {user ? (
         <div className="flex flex-col gap-4">
           <div className="flex items-start gap-4 text-[#60A5FA] font-bold">
             <img
+              alt="User avatar"
               src={avatarUrl || "/default-profile-pic.jpg"}
               className="w-9 h-9 rounded-full object-cover ring-1 ring-gray-300 dark:ring-white/10"
             />
@@ -110,7 +137,7 @@ const SideBar = () => {
           ))}
         </div>
       ))}
-    </div>
+    </nav>
   );
 };
 

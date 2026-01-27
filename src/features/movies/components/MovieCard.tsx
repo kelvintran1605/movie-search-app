@@ -18,6 +18,7 @@ const MovieCard = ({ name, date, rating, imgURL }: MovieCardProps) => {
     >
       <div className="relative overflow-hidden">
         <img
+          loading="lazy"
           className="transition duration-250 h-[300px] w-full object-cover z-0"
           src={imgURL}
           alt={name}

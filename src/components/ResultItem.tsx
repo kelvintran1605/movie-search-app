@@ -86,6 +86,7 @@ const ResultItem = ({
       aria-label={`Open ${title}`}
     >
       <img
+        loading="lazy"
         className="w-14 rounded-xl h-20 object-cover"
         src={url}
         alt={title}

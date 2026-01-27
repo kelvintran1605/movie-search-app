@@ -11,30 +11,52 @@ const Home = () => {
   const { data } = useGetTrendingMoviesQuery(toggleFeaturedOption);
 
   return (
-    <div>
+    <main aria-label="Home page">
       <Hero />
-      <div className="flex gap-4 items-center px-12">
-        <h2 className="font-bold text-3xl text-[#60A5FA]">Featured</h2>
 
-        {/* Toggle Button for Day/Week state */}
-        <button className="flex items-center overflow-hidden justify-around rounded-xl border border-blue-400 mt-2 w-40 h-8 cursor-pointer">
+      <section aria-label="Featured section">
+        <div className="flex gap-4 items-center px-12">
+          <h2 id="featured-title" className="font-bold text-3xl text-[#60A5FA]">
+            Featured
+          </h2>
+
           <div
-            onClick={() => setToggleFeaturedOption("day")}
-            className={`${toggleFeaturedOption === "day" && "bg-blue-400"} transition-all duration-250 rounded-xl flex-1 h-full flex items-center justify-center`}
+            role="radiogroup"
+            aria-labelledby="featured-title"
+            aria-label="Trending time range"
+            className="flex items-center overflow-hidden justify-around rounded-xl border border-blue-400 mt-2 w-40 h-8"
           >
-            Today
+            <button
+              type="button"
+              role="radio"
+              aria-checked={toggleFeaturedOption === "day"}
+              onClick={() => setToggleFeaturedOption("day")}
+              className={`${
+                toggleFeaturedOption === "day" && "bg-blue-400"
+              } transition-all duration-250 rounded-xl flex-1 h-full flex items-center justify-center cursor-pointer`}
+            >
+              Today
+            </button>
+
+            <button
+              type="button"
+              role="radio"
+              aria-checked={toggleFeaturedOption === "week"}
+              onClick={() => setToggleFeaturedOption("week")}
+              className={`${
+                toggleFeaturedOption === "week" && "bg-blue-400"
+              } rounded-xl transition-all duration-250 flex-1 h-full flex items-center justify-center cursor-pointer`}
+            >
+              This Week
+            </button>
           </div>
-          <div
-            onClick={() => setToggleFeaturedOption("week")}
-            className={`${toggleFeaturedOption === "week" && "bg-blue-400"} rounded-xl transition-all duration-250 flex-1 h-full flex items-center justify-center`}
-          >
-            This Week
-          </div>
-        </button>
-      </div>
-      <FeaturedHero movies={data ?? []} />
+        </div>
+
+        <FeaturedHero movies={data ?? []} />
+      </section>
+
       <WatchListSection />
-    </div>
+    </main>
   );
 };
 

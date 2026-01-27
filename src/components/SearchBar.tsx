@@ -1,4 +1,3 @@
-// SearchBar.tsx
 import { FiLayers } from "react-icons/fi";
 import { MdKeyboardArrowDown, MdOutlineMovie, MdClear } from "react-icons/md";
 import { CiSearch } from "react-icons/ci";
@@ -91,7 +90,10 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
       )}
 
       <div ref={optionRef} className="w-2/5">
-        <div
+        <button
+          aria-haspopup="listbox"
+          aria-expanded={isOptionsOpen}
+          aria-controls="search-option-list"
           onClick={() => setIsOptionsOpen(!isOptionsOpen)}
           className="cursor-pointer flex justify-between w-full h-full items-center border-r border-gray-200 px-2 duration-150 hover:bg-indigo-500/10 dark:border-white/10 dark:hover:bg-white/10"
         >
@@ -99,12 +101,17 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
             {selectedOption.icon} {selectedOption.name}
           </div>
           <MdKeyboardArrowDown />
-        </div>
+        </button>
 
         {isOptionsOpen && (
-          <div className="absolute top-full mt-2 py-2 flex flex-col w-1/3 rounded-md z-40 bg-white text-slate-900 border border-gray-200 shadow-xl dark:bg-[#1A1A1A] dark:text-white dark:border-white/10">
+          <div
+            role="listbox"
+            className="absolute top-full mt-2 py-2 flex flex-col w-1/3 rounded-md z-40 bg-white text-slate-900 border border-gray-200 shadow-xl dark:bg-[#1A1A1A] dark:text-white dark:border-white/10"
+          >
             {options.map((option) => (
               <button
+                role="option"
+                aria-selected={selectedOption.value === option.value}
                 type="button"
                 key={option.value}
                 onClick={() => {
@@ -121,6 +128,9 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
       </div>
 
       <input
+        aria-label="Search"
+        aria-controls="search-results"
+        aria-expanded={isPanelOpen}
         data-search-input
         onFocus={() => setIsPanelOpen(true)}
         onChange={(e) => setQuery(e.target.value)}

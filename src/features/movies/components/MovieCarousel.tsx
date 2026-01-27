@@ -18,7 +18,11 @@ const MovieCarousel = ({
           to={`/${m.type}/${m.id}`}
           className="flex flex-col items-center shrink-0 w-33 hover:scale-105 cursor-pointer duration-150"
         >
-          <img src={m.url} className="h-50 w-33 rounded-x object-cover" />
+          <img
+            loading="lazy"
+            src={m.url}
+            className="h-50 w-33 rounded-x object-cover"
+          />
           <div className="line-clamp-1">{m.title || m.name}</div>
         </Link>
       ))}

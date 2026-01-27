@@ -1,4 +1,3 @@
-// NavBar.tsx
 import { Link } from "react-router-dom";
 import SearchBar from "../SearchBar.tsx";
 import { useAuth } from "@/context/AuthContext.ts";
@@ -45,34 +44,64 @@ const NavBar = () => {
   `;
 
   const dropLink =
-    "w-full block px-3 py-2 rounded-lg text-black/90 dark:text-white/90 hover:text-[#60A5FA] hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer font-bold transition";
+    "w-full block px-3 py-2 rounded-lg text-black/90 dark:text-white/90 hover:text-[#60A5FA] hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400";
 
+  const menuItemFocus =
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded-md";
+
+  // Get user state
   const { user, loading, avatarUrl } = useAuth();
+
+  // Get UI state
   const { openSignIn, openSignUp, openSideBar } = useUI();
 
+  // Open/close state of profile menu
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Mobile layout management state for searchbar
   const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
+
   const profileRef = useRef<HTMLDivElement>(null);
+  const profileBtnRef = useRef<HTMLButtonElement>(null);
+  const openSearchBtnRef = useRef<HTMLButtonElement>(null);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setIsProfileOpen(false);
   };
 
+  // If user clicks outside of the profile menu => close it
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (!profileRef.current?.contains(e.target as Node)) {
         setIsProfileOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  // If user press esc => close it
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isProfileOpen) {
+        setIsProfileOpen(false);
+        profileBtnRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isProfileOpen]);
+
   if (loading) return null;
 
   return (
-    <nav className="relative w-full z-20 bg-white/95 text-black border-b border-gray-200 dark:bg-black/60 dark:text-white dark:border-white/10">
+    <nav
+      aria-label="Primary"
+      className="relative w-full z-20 bg-white/95 text-black border-b border-gray-200 dark:bg-black/60 dark:text-white dark:border-white/10"
+    >
       <NavigationMenu viewport={false} className="w-full">
         <div className="flex w-full items-center justify-between px-4 py-3">
           <div className="flex items-center gap-4 w-full">
@@ -88,12 +117,15 @@ const NavBar = () => {
             {isSearchBarOpen && (
               <button
                 type="button"
-                onClick={() => setIsSearchBarOpen(false)}
+                onClick={() => {
+                  setIsSearchBarOpen(false);
+                  openSearchBtnRef.current?.focus();
+                }}
                 aria-label="Close search"
                 className="md:hidden cursor-pointer hover:text-gray-400 duration-150 absolute right-4 top-1/2 -translate-y-1/2
                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
               >
-                <MdClose className="text-xl" />
+                <MdClose className="text-xl" aria-hidden="true" />
               </button>
             )}
           </div>
@@ -102,6 +134,7 @@ const NavBar = () => {
             className={`${isSearchBarOpen ? "hidden" : "block"} ml-auto flex gap-4 items-center`}
           >
             <button
+              ref={openSearchBtnRef}
               type="button"
               onClick={() => setIsSearchBarOpen((prev) => !prev)}
               aria-label="Open search"
@@ -109,8 +142,9 @@ const NavBar = () => {
              text-slate-600 hover:text-slate-900 text-xl dark:text-gray-300 dark:hover:text-white
              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded`}
             >
-              <CiSearch />
+              <CiSearch aria-hidden="true" />
             </button>
+
             <button
               type="button"
               onClick={openSideBar}
@@ -118,7 +152,7 @@ const NavBar = () => {
               className="ml-auto lg:hidden text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white
              duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
             >
-              <GiHamburgerMenu />
+              <GiHamburgerMenu aria-hidden="true" />
             </button>
           </div>
 
@@ -164,27 +198,39 @@ const NavBar = () => {
               {user ? (
                 <div ref={profileRef} className="relative">
                   {isProfileOpen && (
-                    <div className="absolute right-0 top-full mt-2 flex flex-col gap-2 bg-white text-black dark:bg-[#0D0D0D] dark:text-white border border-gray-200 dark:border-white/10 p-4 w-60 rounded-xl shadow-xl font-semibold">
+                    <div
+                      id="profile-menu"
+                      role="menu"
+                      aria-label="Profile menu"
+                      className="absolute right-0 top-full mt-2 flex flex-col gap-2 bg-white text-black dark:bg-[#0D0D0D] dark:text-white border border-gray-200 dark:border-white/10 p-4 w-60 rounded-xl shadow-xl font-semibold"
+                    >
                       <span className="px-2 text-gray-600 dark:text-gray-400">
                         {user.user_metadata.full_name || "Movix User"}
                       </span>
+
                       <Link
                         to="/account-settings"
                         onClick={() => setIsProfileOpen(false)}
-                        className="px-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                        className={`px-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 ${menuItemFocus}`}
+                        role="menuitem"
                       >
                         Account Settings
                       </Link>
+
                       <Link
                         to="/watchlist"
                         onClick={() => setIsProfileOpen(false)}
-                        className="px-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                        className={`px-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 ${menuItemFocus}`}
+                        role="menuitem"
                       >
                         My Watchlist
                       </Link>
+
                       <button
+                        type="button"
                         onClick={handleSignOut}
-                        className="px-2 text-left rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                        className={`px-2 text-left rounded-md hover:bg-gray-100 dark:hover:bg-white/10 ${menuItemFocus}`}
+                        role="menuitem"
                       >
                         Sign Out
                       </button>
@@ -192,27 +238,43 @@ const NavBar = () => {
                   )}
 
                   <button
-                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center gap-2 cursor-pointer"
+                    ref={profileBtnRef}
+                    type="button"
+                    aria-label="Open profile menu"
+                    aria-haspopup="menu"
+                    aria-expanded={isProfileOpen}
+                    aria-controls="profile-menu"
+                    onClick={() => setIsProfileOpen((p) => !p)}
+                    className="flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
                   >
                     <img
+                      alt={
+                        user?.user_metadata?.full_name
+                          ? `${user.user_metadata.full_name} avatar`
+                          : "User avatar"
+                      }
                       src={avatarUrl || "/default-profile-pic.jpg"}
                       className="w-9 h-9 rounded-full object-cover ring-1 ring-gray-300 dark:ring-white/10"
                     />
-                    <DropDownArrow className="text-gray-700 dark:text-gray-300" />
+                    <DropDownArrow
+                      aria-hidden="true"
+                      className="text-gray-700 dark:text-gray-300"
+                    />
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-4">
                   <button
+                    type="button"
                     onClick={openSignIn}
-                    className="font-bold w-15 hover:underline"
+                    className={`font-bold w-15 hover:underline ${menuItemFocus}`}
                   >
                     Sign In
                   </button>
                   <button
+                    type="button"
                     onClick={openSignUp}
-                    className="px-5 py-1 w-38 rounded-xl font-semibold text-white bg-linear-to-r from-[#3B82F6] to-[#60A5FA] shadow-md shadow-blue-500/20 hover:scale-[1.04] transition"
+                    className={`px-5 py-1 w-38 rounded-xl font-semibold text-white bg-linear-to-r from-[#3B82F6] to-[#60A5FA] shadow-md shadow-blue-500/20 hover:scale-[1.04] transition ${menuItemFocus}`}
                   >
                     Sign Up For Free
                   </button>

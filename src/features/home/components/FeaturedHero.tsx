@@ -89,6 +89,7 @@ const FeaturedHero = ({ movies }: { movies: MovieDetail[] }) => {
               duration-150"
             >
               <img
+                loading="lazy"
                 src={e?.imgUrl || ""}
                 className="w-20 sm:w-23 rounded-xl h-28 sm:h-35 object-cover shrink-0"
               />

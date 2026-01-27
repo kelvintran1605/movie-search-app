@@ -7,7 +7,7 @@ import { CiDesktop as DesktopIcon } from "react-icons/ci";
 import { GrLanguage as LanguageIcon } from "react-icons/gr";
 import { MdKeyboardArrowDown as ArrowDown } from "react-icons/md";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SetPasswordPopUp from "../components/SetPasswordPopup";
 import { supabase } from "@/lib/supabase";
 import ChangePasswordPopup from "../components/ChangePasswordPopup";
@@ -15,7 +15,9 @@ import AvatarPicker from "../components/AvatarPicker";
 import { useTheme } from "@/context/ThemeContext";
 
 const AccountSettings = () => {
+  // Get user state
   const { user, avatarUrl: profileUrl } = useAuth();
+  // Get theme state
   const { themeMode, setThemeMode } = useTheme();
   const [hasPassword, setHasPassword] = useState(false);
   const [isSetPasswordOpen, setIsSetPasswordOpen] = useState(false);
@@ -29,6 +31,13 @@ const AccountSettings = () => {
     return first.toUpperCase() + rest.join("");
   };
 
+  const mainRef = useRef<HTMLDivElement>(null);
+  const lastFocusRef = useRef<HTMLElement | null>(null);
+
+  const anyModalOpen =
+    isSetPasswordOpen || isChangePasswordOpen || isAvatarPickerOpen;
+
+  // Check if the user has password (rather than just OAuth)
   useEffect(() => {
     if (!user?.id) return;
 
@@ -50,12 +59,43 @@ const AccountSettings = () => {
     getHasPassword();
   }, [user?.id]);
 
+  // Get user avatar
   useEffect(() => {
     setAvatarUrl(profileUrl || "");
   }, [profileUrl]);
 
+  useEffect(() => {
+    if (anyModalOpen) {
+      lastFocusRef.current = document.activeElement as HTMLElement | null;
+      return;
+    }
+    lastFocusRef.current?.focus?.();
+  }, [anyModalOpen]);
+
+  useEffect(() => {
+    if (!anyModalOpen) return;
+
+    const appRoot =
+      (document.getElementById("root") as HTMLElement | null) ??
+      (document.getElementById("__next") as HTMLElement | null) ??
+      mainRef.current;
+
+    if (!appRoot) return;
+
+    const prevAriaHidden = appRoot.getAttribute("aria-hidden");
+    appRoot.setAttribute("aria-hidden", "true");
+
+    return () => {
+      if (prevAriaHidden === null) appRoot.removeAttribute("aria-hidden");
+      else appRoot.setAttribute("aria-hidden", prevAriaHidden);
+    };
+  }, [anyModalOpen]);
+
   return (
-    <div className="flex flex-col gap-4 text-black dark:text-white bg-gray-100 dark:bg-black items-center relative px-4 py-8 sm:px-8 sm:py-12 lg:px-20 lg:py-16">
+    <div
+      ref={mainRef}
+      className="flex flex-col gap-4 text-black dark:text-white bg-gray-100 dark:bg-black items-center relative px-4 py-8 sm:px-8 sm:py-12 lg:px-20 lg:py-16"
+    >
       {isAvatarPickerOpen && (
         <AvatarPicker
           avatarUrl={avatarUrl}
@@ -66,6 +106,8 @@ const AccountSettings = () => {
 
       {(isSetPasswordOpen || isChangePasswordOpen || isAvatarPickerOpen) && (
         <div
+          role="presentation"
+          aria-hidden="true"
           onClick={() => {
             setIsSetPasswordOpen(false);
             setIsChangePasswordOpen(false);
@@ -88,12 +130,18 @@ const AccountSettings = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-start gap-4">
-            <img
+            <button
+              type="button"
               onClick={() => setIsAvatarPickerOpen(true)}
-              className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-full cursor-pointer hover:ring-slate-400 dark:hover:ring-slate-600 hover:scale-105 duration-150 hover:ring-2"
-              src={avatarUrl || "/default-avatar.png"}
-              alt="Avatar"
-            />
+              aria-label="Change avatar"
+              className="rounded-full cursor-pointer hover:ring-slate-400 dark:hover:ring-slate-600 hover:scale-105 duration-150 hover:ring-2"
+            >
+              <img
+                className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-full"
+                src={avatarUrl || "/default-avatar.png"}
+                alt="User avatar"
+              />
+            </button>
 
             <div className="flex flex-col gap-1 w-full">
               <h3 className="font-bold text-black/70 dark:text-white/70 text-sm sm:text-base">
@@ -107,7 +155,7 @@ const AccountSettings = () => {
                 Email Address
               </h3>
               <div className="flex items-center gap-2 text-sm sm:text-base break-all">
-                <MailIcon /> {user?.email}
+                <MailIcon aria-hidden="true" /> <span>{user?.email}</span>
               </div>
             </div>
           </div>
@@ -120,13 +168,16 @@ const AccountSettings = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-start gap-4 mt-4 border-b border-gray-300 dark:border-gray-800 pb-6 sm:pb-7">
-            <div className="bg-blue-300/30 text-2xl p-2 rounded-xl shrink-0">
-              <LinkIcon className="text-green-500" />
+            <div
+              className="bg-blue-300/30 text-2xl p-2 rounded-xl shrink-0"
+              aria-hidden="true"
+            >
+              <LinkIcon className="text-green-500" aria-hidden="true" />
             </div>
 
             <div className="flex flex-col">
               <div className="text-base sm:text-lg">Connected via</div>
-              <ul className="mt-1">
+              <ul className="mt-1" aria-label="Connected providers">
                 {providers?.map((provider) => (
                   <li
                     className="text-black/70 dark:text-white/70 list-disc ml-4 text-sm sm:text-base"
@@ -141,8 +192,11 @@ const AccountSettings = () => {
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-4 border-b border-gray-300 dark:border-gray-800 pb-6 sm:pb-7">
             <div className="flex items-center gap-4">
-              <div className="bg-blue-300/30 text-2xl p-2 rounded-xl shrink-0">
-                <KeyIcon className="text-yellow-600" />
+              <div
+                className="bg-blue-300/30 text-2xl p-2 rounded-xl shrink-0"
+                aria-hidden="true"
+              >
+                <KeyIcon className="text-yellow-600" aria-hidden="true" />
               </div>
 
               <div className="flex flex-col">
@@ -157,6 +211,8 @@ const AccountSettings = () => {
             !hasPassword ? (
               <button
                 onClick={() => setIsSetPasswordOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={isSetPasswordOpen}
                 className="w-full sm:w-[140px] bg-black dark:bg-white text-white dark:text-black rounded-md p-2 sm:p-1 cursor-pointer hover:bg-gray-800 dark:hover:bg-gray-300 duration-150"
               >
                 Set password
@@ -164,6 +220,8 @@ const AccountSettings = () => {
             ) : (
               <button
                 onClick={() => setIsChangePasswordOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={isChangePasswordOpen}
                 className="w-full sm:w-40 bg-gray-200 dark:bg-[#1A1A1A]/20 text-black dark:text-white rounded-md p-2 sm:p-1 ring ring-gray-400 dark:ring-gray-600 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700 duration-150"
               >
                 Change password
@@ -188,7 +246,10 @@ const AccountSettings = () => {
           {!user?.app_metadata?.providers?.includes("email") &&
             !hasPassword && (
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center bg-yellow-100 dark:bg-yellow-500/10 p-4 sm:p-5 rounded-md mt-4">
-                <ExclamationIcon className="text-yellow-400 shrink-0" />
+                <ExclamationIcon
+                  className="text-yellow-400 shrink-0"
+                  aria-hidden="true"
+                />
                 <div className="text-sm sm:text-base">
                   <div className="text-yellow-700 dark:text-yellow-500">
                     You're currently signed in with Google only
@@ -211,55 +272,77 @@ const AccountSettings = () => {
             Theme
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <div
+          <div
+            className="grid grid-cols-1 sm:grid-cols-3 gap-2"
+            role="radiogroup"
+            aria-label="Theme"
+          >
+            <button
+              type="button"
               onClick={() => setThemeMode("dark")}
+              role="radio"
+              aria-checked={themeMode === "dark"}
               className={`${
                 themeMode === "dark"
                   ? "bg-gray-300 dark:bg-gray-600"
                   : "bg-transparent"
               } hover:bg-gray-200 dark:hover:bg-gray-600 duration-150 cursor-pointer flex flex-col items-center justify-center border border-gray-300 dark:border-gray-500 rounded-md p-3 w-full`}
             >
-              <DarkIcon className="text-2xl" />
+              <DarkIcon className="text-2xl" aria-hidden="true" />
               Dark
-            </div>
+            </button>
 
-            <div
+            <button
+              type="button"
               onClick={() => setThemeMode("light")}
+              role="radio"
+              aria-checked={themeMode === "light"}
               className={`${
                 themeMode === "light"
                   ? "bg-gray-300 dark:bg-gray-600"
                   : "bg-transparent"
               } hover:bg-gray-200 dark:hover:bg-gray-600 duration-150 cursor-pointer flex flex-col items-center justify-center border border-gray-300 dark:border-gray-500 rounded-md p-3 w-full`}
             >
-              <LightIcon className="text-2xl" />
+              <LightIcon className="text-2xl" aria-hidden="true" />
               Light
-            </div>
+            </button>
 
-            <div
+            <button
+              type="button"
               onClick={() => setThemeMode("system")}
+              role="radio"
+              aria-checked={themeMode === "system"}
               className={`${
                 themeMode === "system"
                   ? "bg-gray-300 dark:bg-gray-600"
                   : "bg-transparent"
               } hover:bg-gray-200 dark:hover:bg-gray-600 duration-150 cursor-pointer flex flex-col items-center justify-center border border-gray-300 dark:border-gray-500 rounded-md p-3 w-full`}
             >
-              <DesktopIcon className="text-2xl" />
+              <DesktopIcon className="text-2xl" aria-hidden="true" />
               System
-            </div>
+            </button>
           </div>
 
           <div className="text-black/70 dark:text-white/70 mt-4 text-sm sm:text-base">
             Language
           </div>
-          <div className="flex items-center justify-between gap-2 text-sm sm:text-base border border-gray-300 dark:border-gray-500 p-3 rounded-md bg-white dark:bg-transparent">
+          <button
+            type="button"
+            className="flex items-center justify-between gap-2 text-sm sm:text-base border border-gray-300 dark:border-gray-500 p-3 rounded-md bg-white dark:bg-transparent w-full"
+            aria-haspopup="listbox"
+            aria-expanded={false}
+            aria-label="Language"
+          >
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-              <LanguageIcon className="text-xl text-black/70 dark:text-white/70 shrink-0" />
+              <LanguageIcon
+                className="text-xl text-black/70 dark:text-white/70 shrink-0"
+                aria-hidden="true"
+              />
               <div className="font-semibold truncate">English</div>
             </div>
 
-            <ArrowDown className="text-2xl shrink-0" />
-          </div>
+            <ArrowDown className="text-2xl shrink-0" aria-hidden="true" />
+          </button>
         </div>
       </div>
     </div>
