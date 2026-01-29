@@ -13,7 +13,7 @@ const MovieCard = ({ name, date, rating, imgURL }: MovieCardProps) => {
 
   return (
     <div
-      className="w-[220px] h-[390px] rounded-2xl shadow-xl cursor-pointer overflow-hidden backdrop-blur-lg transition duration-250
+      className="w-[200px] md:w-[220px] h-[390px] rounded-2xl shadow-xl cursor-pointer overflow-hidden backdrop-blur-lg transition duration-250
       bg-white/80 dark:bg-white/10 hover:border-4 hover:border-slate-600 dark:hover:border-white"
     >
       <div className="relative overflow-hidden">
