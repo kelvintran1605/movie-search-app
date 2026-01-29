@@ -5,10 +5,6 @@ import { useState } from "react";
 import { PiStarFill as StarIcon } from "react-icons/pi";
 import MovieCarousel from "../components/CastCarousel";
 import ReviewCarousel from "../components/ReviewCarousel";
-import {
-  useGetCreditQuery,
-  useGetReviewsQuery,
-} from "@/services/moviesApiSlice";
 import { useParams } from "react-router-dom";
 import {
   useAddtoWatchListMutation,
@@ -34,13 +30,12 @@ const TvDetail = () => {
   const movieId = Number(id);
 
   const isMovieInWatchlist = watchListMovies?.some(
-    (movie) => movie.movie_id === movieId
+    (movie) => movie.movie_id === movieId,
   );
 
   const { data } = useGetTvDetailQuery(movieId);
   const { data: credit } = useGetTvCreditQuery(movieId);
   const { data: reviews } = useGetTvReviewsQuery(movieId);
-  console.log(reviews);
   const handleAdd = async () => {
     if (!data) return;
 
@@ -119,7 +114,7 @@ const TvDetail = () => {
                 >
                   {(genre as { name: string }).name}
                 </div>
-              )
+              ),
             )}
           </div>
           <div className="flex gap-2 items-center text-slate-700 dark:text-slate-300">

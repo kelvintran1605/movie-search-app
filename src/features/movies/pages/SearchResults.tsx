@@ -1,7 +1,3 @@
-// SearchResults.tsx
-// Full working example that supports Movie / TV / Person (including "multi").
-// Comments are in English, as you asked.
-
 import { Link, useSearchParams } from "react-router-dom";
 import { useGetSearchMovieQuery } from "@/services/moviesApiSlice";
 import { useGetPersonDetailQuery } from "@/services/personApiSlice";
@@ -43,12 +39,6 @@ const SearchResults = () => {
 
   // Ensure we always have an array
   const results = (data?.results ?? []) as SearchResult[];
-
-  // If you use TMDB multi-search, results usually include media_type.
-  // We categorize for "multi" option.
-  const movies = results.filter(isMovie);
-  const tvs = results.filter(isTv);
-  const people = results.filter(isPerson);
 
   return (
     <div className="py-12 px-16">
@@ -167,14 +157,6 @@ function getMediaType(r: SearchResult): "movie" | "tv" | "person" {
   if ("title" in r) return "movie";
   if ("name" in r) return "tv";
   return "movie";
-}
-
-function isMovie(r: SearchResult): r is SearchMovie {
-  return getMediaType(r) === "movie";
-}
-
-function isTv(r: SearchResult): r is SearchTv {
-  return getMediaType(r) === "tv";
 }
 
 function isPerson(r: SearchResult): r is SearchPerson {

@@ -1,4 +1,3 @@
-import { useGetPopularQuery } from "@/services/moviesApiSlice";
 import MovieCard from "../components/MovieCard";
 import FilterBar from "../components/FilterBar";
 import PaginationBar from "../components/PaginationBar";

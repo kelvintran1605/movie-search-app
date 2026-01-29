@@ -3,10 +3,13 @@ import { FaDiscord, FaEyeSlash, FaEye } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { IoMdClose as CloseButton } from "react-icons/io";
 import { supabase } from "@/lib/supabase";
-import { useUI } from "@/context/UiContext";
+import { useUI } from "@/context/UIContext";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const SignUpPopUp = () => {
-  const { openSignIn, openSignUp, closeSignIn, closeSignUp } = useUI();
+  const navigate = useNavigate();
+  const { openSignIn, closeSignUp } = useUI();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
@@ -17,15 +20,15 @@ const SignUpPopUp = () => {
   const images = [
     {
       name: "Stranger Things",
-      url: "/stranger-things.jpg",
+      url: "/stranger-things.webp",
     },
     {
       name: "Avengers",
-      url: "/avengers.jpg",
+      url: "/avengers.webp",
     },
     {
       name: "Avatar 2",
-      url: "/avatar.jpg",
+      url: "/avatar.webp",
     },
   ];
 
@@ -39,7 +42,7 @@ const SignUpPopUp = () => {
     });
 
     if (error) {
-      console.error(error.message);
+      toast.error("Something is wrong, please try again");
       return;
     }
   };
@@ -54,7 +57,7 @@ const SignUpPopUp = () => {
     });
 
     if (error) {
-      console.error(error.message);
+      toast.error("Something is wrong, please try again");
     }
   };
 
@@ -83,6 +86,7 @@ const SignUpPopUp = () => {
     }
 
     setTimeout(() => {
+      navigate("/");
       closeSignUp();
     }, 500);
   };

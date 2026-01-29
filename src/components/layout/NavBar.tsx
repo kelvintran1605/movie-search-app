@@ -253,7 +253,10 @@ const NavBar = () => {
                           ? `${user.user_metadata.full_name} avatar`
                           : "User avatar"
                       }
-                      src={avatarUrl || "/default-profile-pic.jpg"}
+                      src={
+                        avatarUrl ||
+                        "https://api.dicebear.com/9.x/avataaars/svg?seed=alex"
+                      }
                       className="w-9 h-9 rounded-full object-cover ring-1 ring-gray-300 dark:ring-white/10"
                     />
                     <DropDownArrow

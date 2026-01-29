@@ -68,7 +68,7 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
       setSortBy(sortByOptions[0].value);
       setSortByOrder("Descending");
     }
-  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const toggleGenre = (id: number) => {
     setDraftGenreIds((prev) =>
@@ -100,87 +100,133 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
   const textPrimary = "text-slate-900 dark:text-gray-100";
   const textMuted = "text-slate-600 dark:text-gray-200";
 
+  // Handling esc press to close popup
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSortByOpen(false);
+        setLanguageOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, []);
   return (
-    <div className="w-full h-fit flex flex-col gap-6 shadow-md overflow-visible border border-slate-200 dark:border-gray-600 p-4 rounded-xl bg-white/70 dark:bg-black/30 backdrop-blur-sm">
+    <aside className="w-full h-fit flex flex-col gap-6 shadow-md overflow-visible border border-slate-200 dark:border-gray-600 p-4 rounded-xl bg-white/70 dark:bg-black/30 backdrop-blur-sm">
+      <h2 className="sr-only">Filters</h2>
       <div className="flex flex-col gap-4">
         <div
           className={`text-base flex items-center justify-between font-semibold ${textPrimary}`}
         >
           <span>Sort By</span>
-          <div
+          <button
+            type="button"
             onClick={() =>
               setSortByOrder(
                 sortByOrder === "Ascending" ? "Descending" : "Ascending",
               )
             }
-            className="text-xl cursor-pointer hover:text-slate-500 dark:hover:text-gray-400 duration-150"
+            className="text-xl cursor-pointer hover:text-slate-500 dark:hover:text-gray-300 duration-150"
+            aria-label={`Toggle sort order. Current: ${sortByOrder}`}
           >
             {sortByOrder === "Ascending" ? (
               <AscendingIcon />
             ) : (
               <DescendingIcon />
             )}
-          </div>
+          </button>
         </div>
 
-        <div
-          onClick={() => setSortByOpen(!isSortByOpen)}
-          className={`relative p-2 px-3 w-full text-left rounded-2xl text-base flex justify-between items-center cursor-pointer hover:border-slate-300 dark:hover:border-gray-500 duration-150 ${fieldBg} ${textPrimary}`}
-        >
-          <span className="truncate">
-            {(sortByOptions.find((item) => item.value === sortBy)?.name ??
-              "Popularity") + ` (${sortByOrder})`}
-          </span>
-          <ArrowDown
-            className={`shrink-0 duration-250 ${isSortByOpen ? "rotate-180" : "rotate-0"}`}
-          />
-
-          <div
-            className={`absolute left-0 top-full mt-2 max-h-0 text-base transition-all duration-250 w-full text-left rounded-2xl flex-col cursor-pointer overflow-hidden opacity-0 scale-95 ${
-              isSortByOpen ? "opacity-100 scale-100 max-h-60" : ""
-            } z-20 ${menuBg}`}
+        <div className="relative">
+          <button
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded={isSortByOpen}
+            aria-controls="sortby-listbox"
+            onClick={() => setSortByOpen(!isSortByOpen)}
+            className={`relative p-2 px-3 w-full text-left rounded-2xl text-base flex justify-between items-center cursor-pointer hover:border-slate-300 dark:hover:border-gray-500 duration-150 ${fieldBg} ${textPrimary}`}
           >
-            {sortByOptions.map((item) => (
-              <div
-                key={item.value}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-gray-600 duration-150"
-                onClick={() => {
-                  setSortBy(item.value);
-                  setSortByOpen(false);
-                }}
-              >
-                <span className={textPrimary}>{item.name}</span>
-              </div>
-            ))}
+            <span className="truncate">
+              {(sortByOptions.find((item) => item.value === sortBy)?.name ??
+                "Popularity") + ` (${sortByOrder})`}
+            </span>
+            <ArrowDown
+              className={`shrink-0 duration-250 ${isSortByOpen ? "rotate-180" : "rotate-0"}`}
+            />
+
+            <div
+              id="sortby-listbox"
+              role="listbox"
+              aria-label="Sort by"
+              className={`absolute flex left-0 top-full mt-2 max-h-0 text-base transition-all duration-250 w-full text-left rounded-2xl flex-col cursor-pointer overflow-hidden opacity-0 scale-95 ${
+                isSortByOpen ? "opacity-100 scale-100 max-h-60" : ""
+              } z-20 ${menuBg}`}
+            >
+              {sortByOptions.map((item) => (
+                <button
+                  role="option"
+                  key={item.value}
+                  className="p-2 hover:bg-slate-100 dark:hover:bg-gray-600 duration-150 w-full text-left cursor-pointer"
+                  onClick={() => {
+                    setSortBy(item.value);
+                    setSortByOpen(false);
+                  }}
+                >
+                  <span className={textPrimary}>{item.name}</span>
+                </button>
+              ))}
+            </div>
+          </button>
+        </div>
+
+        {/* Genres section */}
+        <fieldset className="space-y-2">
+          <legend className={`font-semibold ${textPrimary}`}>Genres</legend>
+
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            {movieGenres.map((item) => {
+              const isSelected = draftGenreIds.includes(item.value);
+              const id = `genre-${item.value}`;
+
+              return (
+                <div key={item.value}>
+                  <input
+                    id={id}
+                    type="checkbox"
+                    className="sr-only"
+                    checked={isSelected}
+                    onChange={() => toggleGenre(item.value)}
+                  />
+                  <label
+                    htmlFor={id}
+                    className={`flex items-center justify-center min-h-11 px-4 py-2 cursor-pointer text-sm border rounded-full hover:scale-105 duration-200 select-none ${
+                      isSelected
+                        ? "bg-sky-500/80 border-sky-400 text-white"
+                        : "bg-slate-50 dark:bg-[#1A1A1A] border-slate-200 dark:border-gray-600 text-slate-700 dark:text-gray-200 hover:text-slate-900 dark:hover:text-white"
+                    }`}
+                  >
+                    {item.name}
+                  </label>
+                </div>
+              );
+            })}
           </div>
-        </div>
+        </fieldset>
 
-        <div className={`font-semibold ${textPrimary}`}>Genres</div>
-        <div className="flex flex-wrap gap-2 sm:gap-3">
-          {movieGenres.map((item) => {
-            const isSelected = draftGenreIds.includes(item.value);
-            return (
-              <div
-                key={item.value}
-                onClick={() => toggleGenre(item.value)}
-                className={`px-3 py-2 cursor-pointer text-sm border rounded-full hover:scale-105 duration-200 select-none ${
-                  isSelected
-                    ? "bg-sky-500/80 border-sky-400 text-white"
-                    : "bg-slate-50 dark:bg-[#1A1A1A] border-slate-200 dark:border-gray-600 text-slate-700 dark:text-gray-200 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                {item.name}
-              </div>
-            );
-          })}
+        {/* Language Options */}
+        <div id="language-label" className={`font-semibold ${textPrimary}`}>
+          Language
         </div>
-
-        <div className={`font-semibold ${textPrimary}`}>Language</div>
-        <div
+        <button
+          type="button"
+          aria-labelledby="language-label language-value"
+          aria-haspopup="listbox"
+          aria-expanded={isLanguageOpen}
+          aria-controls="language-listbox"
           onClick={() => setLanguageOpen(!isLanguageOpen)}
           className={`relative p-2 px-3 w-full text-left rounded-2xl text-base flex justify-between items-center cursor-pointer hover:border-slate-300 dark:hover:border-gray-500 duration-150 ${fieldBg} ${textPrimary}`}
         >
-          <span className="truncate">
+          <span id="language-value" className="truncate">
             {languages.find((item) => item.iso_639_1 === language)
               ?.english_name ?? "None Selected"}
           </span>
@@ -189,26 +235,34 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
           />
 
           <div
-            className={`absolute left-0 top-full mt-2 overflow-auto max-h-0 text-base transition-all duration-250 w-full text-left rounded-2xl flex-col cursor-pointer opacity-0 scale-95 ${
+            id="language-listbox"
+            role="listbox"
+            aria-labelledby="language-label"
+            className={`absolute flex left-0 top-full mt-2 overflow-auto max-h-0 text-base transition-all duration-250 w-full text-left rounded-2xl flex-col cursor-pointer opacity-0 scale-95 ${
               isLanguageOpen ? "opacity-100 scale-100 max-h-60" : ""
             } z-20 ${menuBg}`}
           >
             {languages.map((item) => (
-              <div
+              <button
+                type="button"
+                role="option"
                 key={item.english_name}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-gray-600 duration-150"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-gray-600 duration-150 cursor-pointer text-left"
                 onClick={() => {
                   setLanguage(item.iso_639_1);
                   setLanguageOpen(false);
                 }}
               >
                 <span className={textPrimary}>{item.english_name}</span>
-              </div>
+              </button>
             ))}
           </div>
-        </div>
+        </button>
 
-        <div className={`font-semibold ${textPrimary}`}>Release Year</div>
+        {/* Release Year */}
+        <div id="release-year-label" className={`font-semibold ${textPrimary}`}>
+          Release Year
+        </div>
         <div>
           {location.pathname === "/movies/now-playing" ? (
             <div className="font-bold text-sky-600 dark:text-cyan-400">
@@ -217,6 +271,7 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
           ) : (
             <div>
               <Slider.Root
+                aria-labelledby="release-year-label"
                 value={yearRange}
                 onValueChange={(v) => setYearRange(v as [number, number])}
                 className="relative flex items-center select-none touch-none w-full h-6"
@@ -240,6 +295,7 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
           )}
 
           <button
+            type="button"
             onClick={() =>
               handleApplyFilter(
                 filtersToSearchParams({
@@ -251,14 +307,14 @@ const FilterBar = ({ movieGenres }: { movieGenres: GenreOption[] }) => {
                 }),
               )
             }
-            className="bg-sky-500 dark:bg-sky-400 text-white w-full p-3 rounded-3xl mt-8 sm:mt-10 cursor-pointer hover:opacity-90 hover:scale-[1.02] duration-150 font-semibold"
+            className="bg-sky-600 dark:bg-sky-600 text-white brightness-125 w-full p-3 rounded-3xl mt-8 sm:mt-10 cursor-pointer hover:opacity-90 hover:scale-[1.02] duration-150 font-semibold"
           >
             Apply Filters
             {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ""}
           </button>
         </div>
       </div>
-    </div>
+    </aside>
   );
 };
 

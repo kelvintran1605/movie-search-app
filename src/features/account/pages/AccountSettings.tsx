@@ -4,8 +4,6 @@ import { LuKey as KeyIcon } from "react-icons/lu";
 import { BsExclamationCircle as ExclamationIcon } from "react-icons/bs";
 import { CiDark as DarkIcon, CiLight as LightIcon } from "react-icons/ci";
 import { CiDesktop as DesktopIcon } from "react-icons/ci";
-import { GrLanguage as LanguageIcon } from "react-icons/gr";
-import { MdKeyboardArrowDown as ArrowDown } from "react-icons/md";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useRef, useState } from "react";
 import SetPasswordPopUp from "../components/SetPasswordPopup";
@@ -49,7 +47,6 @@ const AccountSettings = () => {
         .maybeSingle();
 
       if (error) {
-        console.log(error.message);
         setHasPassword(false);
         return;
       }
@@ -138,7 +135,10 @@ const AccountSettings = () => {
             >
               <img
                 className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-full"
-                src={avatarUrl || "/default-avatar.png"}
+                src={
+                  avatarUrl ||
+                  "https://api.dicebear.com/9.x/avataaars/svg?seed=alex"
+                }
                 alt="User avatar"
               />
             </button>
@@ -322,27 +322,6 @@ const AccountSettings = () => {
               System
             </button>
           </div>
-
-          <div className="text-black/70 dark:text-white/70 mt-4 text-sm sm:text-base">
-            Language
-          </div>
-          <button
-            type="button"
-            className="flex items-center justify-between gap-2 text-sm sm:text-base border border-gray-300 dark:border-gray-500 p-3 rounded-md bg-white dark:bg-transparent w-full"
-            aria-haspopup="listbox"
-            aria-expanded={false}
-            aria-label="Language"
-          >
-            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-              <LanguageIcon
-                className="text-xl text-black/70 dark:text-white/70 shrink-0"
-                aria-hidden="true"
-              />
-              <div className="font-semibold truncate">English</div>
-            </div>
-
-            <ArrowDown className="text-2xl shrink-0" aria-hidden="true" />
-          </button>
         </div>
       </div>
     </div>

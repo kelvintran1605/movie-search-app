@@ -23,7 +23,7 @@ const Hero = () => {
             <img
               aria-hidden="true"
               className="w-28 absolute hidden -top-16 -left-28 -rotate-16 drop-shadow-lg lg:block"
-              src="/CinemaStar.png"
+              src="/CinemaStar.webp"
               alt=""
             />
           </h1>

@@ -43,7 +43,7 @@ export const buildImageUrl = (
   filePath?: string,
   size?: string,
 ) => {
-  const fallback = "/cinema.jpg";
+  const fallback = "/cinema.webp";
   if (!filePath) return fallback;
 
   const chosen = size || pickPosterSize(cfg);

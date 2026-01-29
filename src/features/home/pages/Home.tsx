@@ -3,12 +3,14 @@ import { useGetTrendingMoviesQuery } from "@/services/moviesApiSlice";
 import FeaturedHero from "../components/FeaturedHero";
 import { useState } from "react";
 import WatchListSection from "../components/WatchlistSection";
-
+import FeaturedHeroSkeleton from "../components/FeaturedHeroSkeleton";
+import DataStateWrapper from "@/components/DataStateWrapper";
 const Home = () => {
   const [toggleFeaturedOption, setToggleFeaturedOption] = useState<
     "day" | "week"
   >("day");
-  const { data } = useGetTrendingMoviesQuery(toggleFeaturedOption);
+  const { data, isLoading, isError } =
+    useGetTrendingMoviesQuery(toggleFeaturedOption);
 
   return (
     <main aria-label="Home page">
@@ -52,7 +54,13 @@ const Home = () => {
           </div>
         </div>
 
-        <FeaturedHero movies={data ?? []} />
+        <DataStateWrapper
+          isLoading={isLoading}
+          isError={isError}
+          skeleton={<FeaturedHeroSkeleton />}
+        >
+          <FeaturedHero movies={data ?? []} />
+        </DataStateWrapper>
       </section>
 
       <WatchListSection />

@@ -55,7 +55,7 @@ const NotAuthenticated = () => {
 
       <img
         className="w-full max-w-xs sm:max-w-sm lg:max-w-md object-contain"
-        src="/unauthorized-page-picture.png"
+        src="/unauthorized-page-picture.webp"
         alt="Illustration for unauthorized access"
       />
     </main>

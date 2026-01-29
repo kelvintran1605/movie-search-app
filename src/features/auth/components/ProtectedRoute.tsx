@@ -1,4 +1,3 @@
-import { supabase } from "@/lib/supabase";
 import { useEffect, useState, type ReactNode } from "react";
 import NotAuthenticated from "./NotAuthenticated";
 import { useAuth } from "@/context/AuthContext";

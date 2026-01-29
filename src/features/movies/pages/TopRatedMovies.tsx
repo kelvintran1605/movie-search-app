@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import PaginationBar from "../components/PaginationBar";
-import {
-  useGetNowPlayingQuery,
-  useGetTopRatedMovieQuery,
-  useGetUpcomingMoviesQuery,
-} from "@/services/moviesApiSlice";
+import { useGetTopRatedMovieQuery } from "@/services/moviesApiSlice";
 import MovieCard from "../components/MovieCard";
 import Skeleton from "react-loading-skeleton";
 

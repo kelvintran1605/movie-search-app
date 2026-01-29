@@ -77,6 +77,7 @@ const ResultItem = ({
   };
   return (
     <button
+      role="option"
       onKeyDown={handleKeyDown}
       data-result-item
       type="button"

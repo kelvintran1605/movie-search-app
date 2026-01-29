@@ -78,7 +78,7 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
         setIsPanelOpen(false);
         setIsOptionsOpen(false);
       }}
-      className={`${isOpen ? "flex mr-7" : "hidden"} relative h-10 w-full md:w-[260px] lg:w-[620px] rounded-md md:flex duration-200 group border border-gray-300 hover:border-indigo-500 focus-within:border-indigo-500 bg-white text-slate-900 dark:bg-[#0D0D0D] dark:text-white dark:border-white/15 dark:hover:border-white/25 dark:focus-within:border-[#60A5FA]`}
+      className={`${isOpen ? "flex mr-7" : "hidden"} relative h-10 w-full md:w-[460px] lg:w-[620px] rounded-md md:flex duration-200 group border border-gray-300 hover:border-indigo-500 focus-within:border-indigo-500 bg-white text-slate-900 dark:bg-[#0D0D0D] dark:text-white dark:border-white/15 dark:hover:border-white/25 dark:focus-within:border-[#60A5FA]`}
     >
       {isPanelOpen && query.length > 1 && (
         <ResultPanel
@@ -128,6 +128,9 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
       </div>
 
       <input
+        role="combobox"
+        aria-autocomplete="list"
+        aria-haspopup="listbox"
         aria-label="Search"
         aria-controls="search-results"
         aria-expanded={isPanelOpen}

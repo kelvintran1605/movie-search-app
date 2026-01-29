@@ -17,10 +17,12 @@ const ResultPanel = ({
   const navigate = useNavigate();
   const handleAllResults = () => {
     navigate(`/search?query=${query}&option=${option}&page=1`);
-    console.log("Button clicked");
   };
   return (
-    <div className="w-full min-h-120 absolute dark:bg-[#1A1A1A] top-full rounded-md">
+    <div
+      role="listbox"
+      className="w-full min-h-120 absolute dark:bg-[#1A1A1A] top-full rounded-md"
+    >
       {[...results]
         .sort((a, b) => b.popularity - a.popularity)
         .slice(0, 7)

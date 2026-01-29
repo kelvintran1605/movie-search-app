@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/context/UIContext";
+import EmptyWatchlist from "@/features/movies/components/EmptyWatchlist";
 import MovieCard from "@/features/movies/components/MovieCard";
 import { getYear } from "@/lib/tmdb.mapper";
 import { useGetWatchlistQuery } from "@/services/watchlistApiSlice";
@@ -75,29 +76,19 @@ const WatchListSection = ({ className }: { className?: string }) => {
 export default WatchListSection;
 
 const WatchlistUser = ({ watchList }: { watchList: WatchlistMovie[] }) => {
-  const displayList = useMemo(() => watchList.slice(0, 12), [watchList]);
+  const displayList = useMemo(() => watchList.slice(0, 6), [watchList]);
 
   if (!displayList.length) {
-    return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="mt-8 rounded-xl border p-6 text-sm
-        border-slate-200 bg-slate-50 text-slate-600
-        dark:border-white/10 dark:bg-white/5 dark:text-gray-300"
-      >
-        Your watchlist is empty.
-      </div>
-    );
+    return <EmptyWatchlist />;
   }
 
   return (
     <div
       role="list"
       aria-label="Watchlist items"
-      className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4"
+      className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 mb-10"
     >
-      {displayList.slice(3).map((movie) => (
+      {displayList.map((movie) => (
         <Link
           key={`${movie.title}-${movie.created_at}-${movie.movie_id}`}
           to={`/${movie.type}/${movie.movie_id}`}

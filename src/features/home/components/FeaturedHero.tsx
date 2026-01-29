@@ -89,6 +89,7 @@ const FeaturedHero = ({ movies }: { movies: MovieDetail[] }) => {
               duration-150"
             >
               <img
+                alt={e?.title}
                 loading="lazy"
                 src={e?.imgUrl || ""}
                 className="w-20 sm:w-23 rounded-xl h-28 sm:h-35 object-cover shrink-0"
@@ -139,7 +140,11 @@ const FeaturedCard = ({
       <div className="absolute bg-linear-to-t from-black via-black/20 to-transparent inset-0 w-full h-full"></div>
 
       <div className="hero-content flex-col lg:flex-row lg:items-end">
-        <img src={url} className="w-28 sm:w-36 lg:w-45 rounded-lg shadow-2xl" />
+        <img
+          alt={name}
+          src={url}
+          className="w-28 sm:w-36 lg:w-45 rounded-lg shadow-2xl"
+        />
         <div className="pb-2">
           <h1 className="text-2xl sm:text-4xl font-semibold text-white">
             {name}

@@ -6,9 +6,11 @@ import { supabase } from "@/lib/supabase";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import toast from "react-hot-toast";
 import { useUI } from "@/context/UIContext";
+import { useNavigate } from "react-router-dom";
 
 const SignInPopUp = () => {
-  const { openSignIn, openSignUp, closeSignIn, closeSignUp } = useUI();
+  const navigate = useNavigate();
+  const { openSignUp, closeSignIn } = useUI();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
@@ -18,15 +20,15 @@ const SignInPopUp = () => {
   const images = [
     {
       name: "Stranger Things",
-      url: "/stranger-things.jpg",
+      url: "/stranger-things.webp",
     },
     {
       name: "Avengers",
-      url: "/avengers.jpg",
+      url: "/avengers.webp",
     },
     {
       name: "Avatar 2",
-      url: "/avatar.jpg",
+      url: "/avatar.webp",
     },
   ];
 
@@ -40,7 +42,7 @@ const SignInPopUp = () => {
     });
 
     if (error) {
-      console.error(error.message);
+      toast.error("Something is wrong, please try again");
     }
   };
 
@@ -54,7 +56,7 @@ const SignInPopUp = () => {
     });
 
     if (error) {
-      console.error(error.message);
+      toast.error("Something is wrong, please try again");
     }
   };
   // Function to handle in-app login
@@ -63,7 +65,7 @@ const SignInPopUp = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -73,6 +75,7 @@ const SignInPopUp = () => {
         return;
       }
       toast.success("Signed in successfully");
+      navigate("/");
       closeSignIn();
     } finally {
       setLoading(false);

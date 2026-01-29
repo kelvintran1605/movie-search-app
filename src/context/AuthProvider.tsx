@@ -30,7 +30,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Register auth login logout listener for the website
     const { data: sub } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         getSupabaseAvatar(session?.user?.id || "");

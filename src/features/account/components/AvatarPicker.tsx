@@ -33,7 +33,6 @@ const AvatarPicker = ({
   // Focus on the model when the component mounts
   const cancelBtnRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    console.log(cancelBtnRef);
     cancelBtnRef?.current?.focus();
 
     const onKeyDown = (e: KeyboardEvent) => {
