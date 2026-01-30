@@ -13,18 +13,26 @@ const MovieCard = ({ name, date, rating, imgURL }: MovieCardProps) => {
 
   return (
     <div
-      className="w-[180px] md:w-[220px] h-[390px] rounded-2xl shadow-xl cursor-pointer overflow-hidden backdrop-blur-lg transition duration-250
-      bg-white/80 dark:bg-white/10 hover:border-4 hover:border-slate-600 dark:hover:border-white"
+      className="
+        w-full overflow-hidden rounded-2xl shadow-xl
+        cursor-pointer transition
+        bg-white/80 dark:bg-white/10
+        hover:ring-2 hover:ring-slate-600 dark:hover:ring-white
+      "
     >
-      <div className="relative overflow-hidden">
-        <img
-          loading="lazy"
-          className="transition duration-250 h-[300px] w-full object-cover z-0"
-          src={imgURL}
-          alt={name}
-        />
+      {/* Poster */}
+      <div className="relative">
+        <div className="aspect-[2/3] w-full overflow-hidden">
+          <img
+            loading="lazy"
+            src={imgURL}
+            alt={name}
+            className="w-full h-full object-cover transition duration-300 hover:scale-105"
+          />
+        </div>
 
-        <div className="absolute bottom-3 left-3 w-12 h-12">
+        {/* Rating Circle */}
+        <div className="absolute bottom-3 left-3 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12">
           <div className="p-0.5 rounded-full bg-black/60 backdrop-blur-sm">
             <CircularProgressbar
               value={percent}
@@ -42,20 +50,24 @@ const MovieCard = ({ name, date, rating, imgURL }: MovieCardProps) => {
         </div>
       </div>
 
-      <div
-        className="p-4 h-full
-        bg-white dark:bg-[#1A1A1A]
-        shadow-xl dark:shadow-[#272727]"
-      >
+      {/* Info */}
+      <div className="p-3 sm:p-4 bg-white dark:bg-[#1A1A1A]">
         <h3
-          className="text-md font-bold
+          className="
+            font-bold
+            text-sm sm:text-[15px] md:text-base
             text-slate-900 dark:text-[#F2F2F2]
             hover:text-sky-500 dark:hover:text-[#60A5FA]
-            duration-150 whitespace-nowrap overflow-hidden text-ellipsis"
+            duration-150
+            line-clamp-2
+          "
+          title={name}
         >
           {name}
         </h3>
-        <p className="text-sm text-slate-600 dark:text-gray-200">{date}</p>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-gray-300 mt-1">
+          {date}
+        </p>
       </div>
     </div>
   );

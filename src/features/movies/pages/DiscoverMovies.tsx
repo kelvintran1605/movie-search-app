@@ -40,6 +40,7 @@ const DiscoverMovies = () => {
     const language = searchParams.get("language") ?? "";
     const yearStr = searchParams.get("year") ?? "2000-2025";
     const [minY, maxY] = yearStr.split("-").map(Number);
+
     return {
       genreIds,
       sortBy,
@@ -58,49 +59,33 @@ const DiscoverMovies = () => {
   });
 
   return (
-    <div className="w-full flex flex-col items-center text-xl bg-gray-100 text-black dark:bg-[#0D0D0D] dark:text-white px-4 py-8 sm:px-6 sm:py-10 lg:px-12 lg:py-12">
-      <h1 className="font-bold text-2xl sm:text-3xl mb-6 sm:mb-10 text-black dark:text-white">
+    <div className="w-full flex flex-col items-center bg-gray-100 text-black dark:bg-[#0D0D0D] dark:text-white px-4 py-8 sm:px-6 sm:py-10 lg:px-12 lg:py-12">
+      <h1 className="font-bold text-2xl sm:text-3xl mb-6 sm:mb-10">
         Discover Movies
       </h1>
 
       <div className="flex w-full flex-col lg:flex-row gap-6 lg:gap-8">
-        <div className="w-full lg:w-[20%]">
+        {/* Sidebar */}
+        <aside className="w-full lg:w-[260px] xl:w-[300px] shrink-0">
           <FilterBar movieGenres={movieGenres} />
-        </div>
+        </aside>
 
-        <div className="w-full lg:w-[80%]">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-stretch gap-4 sm:gap-6">
+        {/* Movie Grid */}
+        <section className="w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
             {isFetching
               ? Array.from({ length: 20 }).map((_, i) => (
-                  <div key={i} className="w-full flex flex-col gap-2">
-                    <Skeleton
-                      height={280}
-                      borderRadius={16}
-                      baseColor="#e5e7eb"
-                      highlightColor="#f3f4f6"
-                      className="dark:opacity-100"
-                    />
-                    <Skeleton
-                      width="80%"
-                      height={18}
-                      baseColor="#e5e7eb"
-                      highlightColor="#f3f4f6"
-                      className="dark:opacity-100"
-                    />
-                    <Skeleton
-                      width="40%"
-                      height={14}
-                      baseColor="#e5e7eb"
-                      highlightColor="#f3f4f6"
-                      className="dark:opacity-100"
-                    />
+                  <div key={i} className="flex flex-col gap-2">
+                    <Skeleton height={260} borderRadius={16} />
+                    <Skeleton width="80%" height={16} />
+                    <Skeleton width="40%" height={14} />
                   </div>
                 ))
               : data?.movies.map((item) => (
                   <Link
                     key={item.id}
                     to={`/movie/${item.id}`}
-                    className="w-full"
+                    className="block"
                   >
                     <MovieCard
                       imgURL={item.imgUrl}
@@ -111,7 +96,7 @@ const DiscoverMovies = () => {
                   </Link>
                 ))}
           </div>
-        </div>
+        </section>
       </div>
 
       <div className="mt-8 sm:mt-10">
