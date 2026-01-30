@@ -7,7 +7,7 @@ Built with React, TypeScript, and the TMDB API.
 ---
 
 ## 🔗 Live Demo
-👉 https://your-app-name.vercel.app
+👉 http://movie-search-app-six-opal.vercel.app
 
 ---
 
