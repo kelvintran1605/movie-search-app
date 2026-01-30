@@ -15,13 +15,18 @@ const ResultPanel = ({
   query: string;
 }) => {
   const navigate = useNavigate();
+
   const handleAllResults = () => {
-    navigate(`/search?query=${query}&option=${option}&page=1`);
+    onPanelOpen(false);
+    navigate(
+      `/search?query=${encodeURIComponent(query)}&option=${option}&page=1`,
+    );
   };
+
   return (
     <div
       role="listbox"
-      className="w-full min-h-120 absolute dark:bg-[#1A1A1A] top-full rounded-md"
+      className="w-full min-h-[120px] absolute dark:bg-[#1A1A1A] top-full rounded-md"
     >
       {[...results]
         .sort((a, b) => b.popularity - a.popularity)
@@ -43,20 +48,22 @@ const ResultPanel = ({
             />
           );
         })}
+
       <button
+        data-result-all
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={handleAllResults}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            navigate(`/search?query=${query}&option=${option}&page=1`);
+            e.preventDefault();
+            handleAllResults();
           }
-
           if (e.key === "Escape") {
             e.preventDefault();
             onPanelOpen(false);
           }
         }}
-        data-result-all
-        type="button"
-        onMouseDown={handleAllResults}
         className="p-2 hover:bg-gray-600/20 duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
       >
         See all results...

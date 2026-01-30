@@ -10,9 +10,6 @@ import type {
 } from "@/types/movie";
 import PaginationBar from "../components/PaginationBar";
 
-// A convenient union type for anything that can appear in search results.
-// (Depending on your definitions, SearchMulti might already include Movie/Tv/Person,
-// but this union keeps it safe.)
 type SearchResult = SearchMovie | SearchTv | SearchPerson | SearchMulti;
 
 const SearchResults = () => {
@@ -22,7 +19,7 @@ const SearchResults = () => {
   const option = (searchParams.get("option") ?? "multi") as SearchOption;
 
   // Get & Set page, default is 1:
-  const page = Number(searchParams.get("page"));
+  const page = Number(searchParams.get("page")) || 1;
 
   const handlePageChange = (nextPage: number) => {
     const sp = new URLSearchParams(searchParams);
@@ -33,7 +30,6 @@ const SearchResults = () => {
   // Fetch search data (RTK Query)
   const { data, isFetching, isError } = useGetSearchMovieQuery(
     { query, option, page },
-    // If query is empty, skip calling the API (optional UX improvement)
     { skip: query.trim() === "" },
   );
 
@@ -41,8 +37,11 @@ const SearchResults = () => {
   const results = (data?.results ?? []) as SearchResult[];
 
   return (
-    <div className="py-12 px-16">
-      <h1 className="font-bold text-2xl">Showing matches for "{query}"</h1>
+    <div className="py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-12">
+      <h1 className="font-bold text-xl sm:text-2xl">
+        Showing matches for{" "}
+        <span className="text-cyan-400 break-words">"{query}"</span>
+      </h1>
 
       {query.trim() === "" && (
         <div className="text-gray-400 mt-3">Type something to search.</div>
@@ -56,25 +55,25 @@ const SearchResults = () => {
 
       {!isFetching && query.trim() !== "" && (
         <>
-          {/* MULTI: show 3 sections */}
           {option === "multi" && (
-            <div className="mt-6 flex flex-col gap-10">
+            <div className="mt-6 flex flex-col gap-8 sm:gap-10">
               <ResultSection sectionName="Multi" results={results} />
             </div>
           )}
 
-          {/* If you have separate options (movie/tv/person), show one section */}
           {option !== "multi" && (
             <div className="mt-6">
               <ResultSection sectionName="Results" results={results} />
             </div>
           )}
 
-          <PaginationBar
-            currentPage={page}
-            totalPages={data?.total_pages}
-            onPageChange={handlePageChange}
-          />
+          <div className="mt-8 sm:mt-10">
+            <PaginationBar
+              currentPage={page}
+              totalPages={data?.total_pages}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </>
       )}
     </div>
@@ -90,15 +89,14 @@ const ResultSection = ({
 }) => {
   return (
     <div className="w-full">
-      {/* Section Title */}
-      <h2 className="font-bold text-xl border-l-4 border-amber-500 pl-2">
+      <h2 className="font-bold text-lg sm:text-xl border-l-4 border-amber-500 pl-2">
         {sectionName}
       </h2>
 
       {results.length === 0 ? (
         <div className="text-gray-400 mt-3">No results.</div>
       ) : (
-        <div className="flex flex-col gap-4 w-full rounded-md mt-4">
+        <div className="flex flex-col gap-3 sm:gap-4 w-full rounded-md mt-4">
           {results.map((result) => (
             <ResultCard
               key={`${getMediaType(result)}-${result.id}`}
@@ -121,30 +119,59 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
   const title = getDisplayTitle(result);
   const subtitle = getDisplayYearOrJob(result);
   const overview = getOverview(result, personDetail?.biography);
-
-  // Build a route based on media_type
   const link = buildDetailLink(result);
+  const imgSrc = (result as any).url as string | undefined;
 
   return (
-    <div className="flex gap-5 p-3 items-center bg-[#0D0D0D] border border-white/10 rounded-xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_12px_40px_rgba(255,255,255,0.08)]">
-      {/* Use optional chaining in case url is missing */}
-      <img
-        className="w-20 rounded-xl h-30 object-cover"
-        src={(result as any).url}
-        alt={title}
-      />
+    <div
+      className="
+        flex items-start
+        gap-4
+        p-3 sm:p-4
+        bg-[#0D0D0D]
+        border border-white/10
+        rounded-xl
+        shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_12px_40px_rgba(255,255,255,0.08)]
+      "
+    >
+      {/* Image LEFT */}
+      <div className="w-[90px] sm:w-[100px] md:w-[110px] shrink-0">
+        <div className="w-full aspect-[2/3] overflow-hidden rounded-xl bg-white/5">
+          {imgSrc ? (
+            <img
+              className="w-full h-full object-cover"
+              src={imgSrc}
+              alt={title}
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
+              No image
+            </div>
+          )}
+        </div>
+      </div>
 
-      <div>
+      {/* Text RIGHT */}
+      <div className="min-w-0 flex-1">
         <Link
           to={link}
-          className="font-bold hover:text-cyan-400 duration-150 cursor-pointer"
+          className="
+            font-bold
+            text-base sm:text-lg
+            hover:text-cyan-400 duration-150
+            line-clamp-1
+          "
+          title={title}
         >
           {title}
         </Link>
 
-        <div className="text-gray-400 mb-3">{subtitle}</div>
+        <div className="text-gray-400 mb-2 sm:mb-3 text-sm">{subtitle}</div>
 
-        <div className="text-gray-300 line-clamp-2">{overview}</div>
+        <div className="text-gray-300 text-sm sm:text-base line-clamp-2 sm:line-clamp-3">
+          {overview}S
+        </div>
       </div>
     </div>
   );
@@ -152,7 +179,6 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
 
 function getMediaType(r: SearchResult): "movie" | "tv" | "person" {
   if ("media_type" in r && (r as any).media_type) return (r as any).media_type;
-  // Fallback guesses (optional)
   if ("job" in r) return "person";
   if ("title" in r) return "movie";
   if ("name" in r) return "tv";
@@ -163,36 +189,25 @@ function isPerson(r: SearchResult): r is SearchPerson {
   return getMediaType(r) === "person";
 }
 
-/* =========================
-   Display Helpers (No Hooks)
-   ========================= */
-
 const getDisplayTitle = (r: SearchResult) => {
-  // Movie usually has "title"
   if ("title" in r && typeof r.title === "string" && r.title.trim() !== "") {
     return r.title;
   }
-
-  // TV/Person usually has "name"
   if ("name" in r && typeof r.name === "string" && r.name.trim() !== "") {
     return r.name;
   }
-
   return "Untitled";
 };
 
 const getDisplayYearOrJob = (r: SearchResult) => {
-  // If you already have a "year" field in your transformed types, use it.
   if ("year" in r && typeof (r as any).year === "string" && (r as any).year) {
     return (r as any).year;
   }
 
-  // If you have "job" for certain types, show it.
   if ("job" in r && typeof (r as any).job === "string" && (r as any).job) {
     return (r as any).job;
   }
 
-  // Optional: infer year from release_date/first_air_date if your types include them
   if ("release_date" in r && typeof (r as any).release_date === "string") {
     return (r as any).release_date.slice(0, 4) || "N/A";
   }
@@ -204,13 +219,11 @@ const getDisplayYearOrJob = (r: SearchResult) => {
 };
 
 const getOverview = (r: SearchResult, personBio?: string) => {
-  // Movie/TV overview
   if ("overview" in r && typeof (r as any).overview === "string") {
     const ov = (r as any).overview.trim();
     return ov !== "" ? ov : "N/A";
   }
 
-  // Person biography (fetched separately)
   if (isPerson(r)) {
     const bio = (personBio ?? "").trim();
     return bio !== "" ? bio : "N/A";
@@ -218,10 +231,6 @@ const getOverview = (r: SearchResult, personBio?: string) => {
 
   return "N/A";
 };
-
-/* =========================
-   Link Builder
-   ========================= */
 
 function buildDetailLink(r: SearchResult) {
   const mt = getMediaType(r);

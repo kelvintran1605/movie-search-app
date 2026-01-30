@@ -135,7 +135,7 @@ const WatchListGuest = () => {
         onClick={openSignIn}
         aria-haspopup="dialog"
         aria-label="Sign in to Movix"
-        className="bg-[#60A5FA] px-4 py-2 rounded-xl mt-3 sm:mt-4 cursor-pointer hover:scale-105 duration-150 text-sm sm:text-base
+        className="bg-[#60A5FA] mb-8 px-4 py-2 rounded-xl mt-3 sm:mt-4 cursor-pointer hover:scale-105 duration-150 text-sm sm:text-base
         text-white"
       >
         Sign In to Movix

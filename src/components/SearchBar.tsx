@@ -21,6 +21,8 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
   const optionRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<number | null>(null);
+
   const options = useMemo(
     () => [
       { name: "All", value: "multi", icon: <FiLayers /> },
@@ -39,8 +41,14 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
   );
 
   useEffect(() => {
-    const timer = setTimeout(() => setSubmittedQuery(query.trim()), 500);
-    return () => clearTimeout(timer);
+    if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    debounceRef.current = window.setTimeout(() => {
+      setSubmittedQuery(query.trim());
+    }, 500);
+
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
   }, [query]);
 
   useEffect(() => {
@@ -55,9 +63,18 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
   const navigate = useNavigate();
 
   const goSearch = (q: string) => {
+    if (debounceRef.current) window.clearTimeout(debounceRef.current);
+
+    setIsPanelOpen(false);
+    setIsOptionsOpen(false);
+    setSubmittedQuery("");
+    setQuery("");
+    inputRef.current?.blur();
+
     navigate(
       `/search?query=${encodeURIComponent(q)}&option=${selectedOption.value}&page=1`,
     );
+
     const stored: string[] = JSON.parse(
       localStorage.getItem("recentSearches") || "[]",
     );
@@ -71,10 +88,7 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
       ref={wrapperRef}
       onBlur={(e) => {
         const next = (e.relatedTarget as Node) || null;
-
-        // If focus switches to the elements inside SearchBar (panel, button,...) => don't close it
         if (next && e.currentTarget.contains(next)) return;
-
         setIsPanelOpen(false);
         setIsOptionsOpen(false);
       }}
@@ -83,7 +97,7 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
       {isPanelOpen && query.length > 1 && (
         <ResultPanel
           query={query}
-          onPanelOpen={() => setIsPanelOpen(false)}
+          onPanelOpen={setIsPanelOpen}
           option={selectedOption.value as SearchOption}
           results={data?.results}
         />
@@ -143,7 +157,10 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
         type="text"
         placeholder="Search movies, TV shows, people..."
         onKeyDown={(e) => {
-          if (e.key === "Enter" && query.trim()) goSearch(query.trim());
+          if (e.key === "Enter" && query.trim()) {
+            e.preventDefault();
+            goSearch(query.trim());
+          }
 
           if (e.key === "ArrowDown" && isPanelOpen) {
             e.preventDefault();
@@ -151,7 +168,6 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
               wrapperRef.current?.querySelector<HTMLButtonElement>(
                 "[data-result-item]",
               );
-
             first?.focus();
           }
 
@@ -163,11 +179,10 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
 
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => query.trim() && goSearch(query.trim())}
         aria-label="Search"
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-xl text-slate-600 hover:text-slate-900
-             dark:text-gray-300 dark:hover:text-white
-             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-xl text-slate-600 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
       >
         <CiSearch />
       </button>
@@ -175,11 +190,10 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
       {query && (
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => setQuery("")}
           aria-label="Clear search"
-          className="absolute right-10 top-1/2 -translate-y-1/2 text-xl text-slate-500 hover:text-slate-900
-               dark:text-gray-300 dark:hover:text-white
-               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
+          className="absolute right-10 top-1/2 -translate-y-1/2 text-xl text-slate-500 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
         >
           <MdClear />
         </button>
