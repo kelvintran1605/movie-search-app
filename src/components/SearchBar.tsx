@@ -45,26 +45,26 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
     debounceRef.current = window.setTimeout(() => {
       setSubmittedQuery(query.trim());
     }, 500);
-
     return () => {
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
     };
   }, [query]);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (!optionRef.current?.contains(e.target as Node))
+    const onPointerDown = (e: PointerEvent) => {
+      if (!wrapperRef.current?.contains(e.target as Node)) {
+        setIsPanelOpen(false);
         setIsOptionsOpen(false);
+      }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
   const navigate = useNavigate();
 
   const goSearch = (q: string) => {
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
-
     setIsPanelOpen(false);
     setIsOptionsOpen(false);
     setSubmittedQuery("");
@@ -86,12 +86,6 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
   return (
     <div
       ref={wrapperRef}
-      onBlur={(e) => {
-        const next = (e.relatedTarget as Node) || null;
-        if (next && e.currentTarget.contains(next)) return;
-        setIsPanelOpen(false);
-        setIsOptionsOpen(false);
-      }}
       className={`${isOpen ? "flex mr-7" : "hidden"} relative h-10 w-full md:w-[460px] lg:w-[620px] rounded-md md:flex duration-200 group border border-gray-300 hover:border-indigo-500 focus-within:border-indigo-500 bg-white text-slate-900 dark:bg-[#0D0D0D] dark:text-white dark:border-white/15 dark:hover:border-white/25 dark:focus-within:border-[#60A5FA]`}
     >
       {isPanelOpen && query.length > 1 && (
@@ -161,7 +155,6 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
             e.preventDefault();
             goSearch(query.trim());
           }
-
           if (e.key === "ArrowDown" && isPanelOpen) {
             e.preventDefault();
             const first =
@@ -170,7 +163,6 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
               );
             first?.focus();
           }
-
           if (e.key === "Escape") {
             setIsPanelOpen(false);
           }
@@ -179,7 +171,6 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
 
       <button
         type="button"
-        onMouseDown={(e) => e.preventDefault()}
         onClick={() => query.trim() && goSearch(query.trim())}
         aria-label="Search"
         className="absolute right-3 top-1/2 -translate-y-1/2 text-xl text-slate-600 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"
@@ -190,7 +181,6 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
       {query && (
         <button
           type="button"
-          onMouseDown={(e) => e.preventDefault()}
           onClick={() => setQuery("")}
           aria-label="Clear search"
           className="absolute right-10 top-1/2 -translate-y-1/2 text-xl text-slate-500 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded"

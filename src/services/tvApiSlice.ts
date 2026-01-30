@@ -13,6 +13,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import tmdbCf from "../samples/tmdb-config.json";
 import type { TmdbCreditWire } from "@/types/tmdb.wire";
 import { mapTmdbCredit } from "@/lib/tmdb.mapper";
+import type { Trailer } from "@/types/movie";
 
 const config = tmdbCf as TmdbConfig;
 
@@ -86,6 +87,19 @@ export const tvApiSlice = createApi({
       },
     }),
 
+    getTvTrailer: build.query({
+      query: (id: number) => {
+        return `/tv/${id}/videos?api_key=${import.meta.env.VITE_TMDB_KEY}`;
+      },
+      transformResponse: (res) => {
+        const video: Trailer = res.results.filter(
+          (r: Trailer) => r.site === "YouTube" && r.official === true,
+        )[0];
+
+        return `https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1&controls=1`;
+      },
+    }),
+
     // Get top rated movie query
     getTopRatedTv: build.query({
       query: ({ page = 1 }: { page: number }) =>
@@ -108,4 +122,5 @@ export const {
   useGetDiscoverTvsQuery,
   useGetNowPlayingTvQuery,
   useGetTopRatedTvQuery,
+  useGetTvTrailerQuery,
 } = tvApiSlice;

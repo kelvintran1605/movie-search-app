@@ -69,28 +69,30 @@ const MovieDetail = () => {
     <div className="w-full px-4 sm:px-6 lg:px-12 py-4 h-full flex flex-col gap-5 text-slate-900 dark:text-white">
       <div className="w-full">
         {play ? (
-          <iframe
-            className="w-full h-[240px] sm:h-[360px] lg:h-[500px]"
-            src={trailerLink}
-            title="YouTube video"
-            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-            allowFullScreen
-          />
+          <div className="relative w-full aspect-[21/9] overflow-hidden rounded-2xl">
+            <iframe
+              className="w-full h-full"
+              src={trailerLink}
+              title="YouTube video"
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         ) : (
-          <div className="relative w-full h-[240px] sm:h-[360px] lg:h-[500px] overflow-hidden rounded-2xl">
+          <div className="relative w-full aspect-[21/9] overflow-hidden rounded-2xl">
             <div className="absolute inset-0 flex items-center justify-center z-10">
               <button
                 onClick={() => setPlay(true)}
                 className="cursor-pointer flex items-center gap-3 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full backdrop-blur text-base sm:text-lg font-semibold transition
-                bg-white/70 text-slate-900 hover:bg-sky-400/70
-                dark:bg-black/60 dark:text-white dark:hover:bg-[#60A5FA]/80"
+          bg-white/70 text-slate-900 hover:bg-sky-400/70
+          dark:bg-black/60 dark:text-white dark:hover:bg-[#60A5FA]/80"
               >
                 <PlayIcon className="text-3xl sm:text-4xl" />
                 Play Trailer
               </button>
             </div>
 
-            <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent z-0" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-0" />
 
             <img
               src={data?.backdropUrl}

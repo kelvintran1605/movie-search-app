@@ -14,7 +14,7 @@ const ResultItem = ({
 }: {
   index: number;
   id: number;
-  option: SearchOption; // "multi" | "movie" | "tv" | "person"
+  option: SearchOption;
   type?: string;
   title: string;
   meta: string;
@@ -23,7 +23,6 @@ const ResultItem = ({
   onPanelOpen: (state: boolean) => void;
 }) => {
   const navigate = useNavigate();
-
   const resolvedType = option === "multi" ? type : option;
 
   const go = () => {
@@ -34,18 +33,15 @@ const ResultItem = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-
       const items = Array.from(
         document.querySelectorAll<HTMLButtonElement>("[data-result-item]"),
       );
-
       if (index === items.length - 1) {
         const allResultsButton =
           document.querySelector<HTMLButtonElement>("[data-result-all]");
         allResultsButton?.focus();
         return;
       }
-
       items[index + 1]?.focus();
     }
 
@@ -54,7 +50,6 @@ const ResultItem = ({
       const items = Array.from(
         document.querySelectorAll<HTMLButtonElement>("[data-result-item]"),
       );
-
       if (index === 0) {
         const input = document.querySelector<HTMLInputElement>(
           "[data-search-input]",
@@ -65,7 +60,7 @@ const ResultItem = ({
       }
     }
 
-    if (e.key === "Enter" || e.key === "") {
+    if (e.key === "Enter") {
       e.preventDefault();
       go();
     }
@@ -75,6 +70,7 @@ const ResultItem = ({
       onPanelOpen(false);
     }
   };
+
   return (
     <button
       role="option"
@@ -82,8 +78,7 @@ const ResultItem = ({
       data-result-item
       type="button"
       onClick={go}
-      className="flex items-start gap-3 w-full border-b border-white/20 p-2 cursor-pointer hover:bg-gray-600/20 duration-150
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+      className="flex items-start gap-3 w-full border-b border-white/20 p-2 cursor-pointer hover:bg-gray-600/20 duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
       aria-label={`Open ${title}`}
     >
       <img

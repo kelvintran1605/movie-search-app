@@ -52,7 +52,6 @@ const ResultPanel = ({
       <button
         data-result-all
         type="button"
-        onMouseDown={(e) => e.preventDefault()}
         onClick={handleAllResults}
         onKeyDown={(e) => {
           if (e.key === "Enter") {

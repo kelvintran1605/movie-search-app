@@ -123,7 +123,8 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
   const imgSrc = (result as any).url as string | undefined;
 
   return (
-    <div
+    <Link
+      to={link}
       className="
         flex items-start
         gap-4
@@ -154,8 +155,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
 
       {/* Text RIGHT */}
       <div className="min-w-0 flex-1">
-        <Link
-          to={link}
+        <div
           className="
             font-bold
             text-base sm:text-lg
@@ -165,7 +165,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
           title={title}
         >
           {title}
-        </Link>
+        </div>
 
         <div className="text-gray-400 mb-2 sm:mb-3 text-sm">{subtitle}</div>
 
@@ -173,7 +173,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
           {overview}S
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
