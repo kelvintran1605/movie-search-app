@@ -50,7 +50,7 @@ const CastDetail = () => {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 py-8 sm:py-10 lg:py-12">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[320px_1fr] xl:grid-cols-[360px_1fr]">
           {/* Left Column */}
-          <div className="lg:sticky lg:top-24 self-start">
+          <div className="lg:top-24 self-start">
             <PersonDetailSection detail={detail} />
           </div>
 

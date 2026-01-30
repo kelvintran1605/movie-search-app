@@ -3,7 +3,10 @@ import type { PersonDetail } from "@/types/person";
 const PersonDetailSection = ({ detail }: { detail: PersonDetail }) => {
   return (
     <div>
-      <img className="rounded-xl mb-6" src={detail.profile_url} />
+      <img
+        className="rounded-xl mb-6 w-40 h-60 object-cover"
+        src={detail.profile_url}
+      />
       <h2 className="text-2xl font-bold tracking-wide">Personal Info</h2>
       <h3 className="font-bold mt-4">Known For</h3>
       <div className="text-gray-400">{detail.known_for_department}</div>
