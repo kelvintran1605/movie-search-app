@@ -40,12 +40,21 @@ Built with React, TypeScript, and the TMDB API.
 
 ---
 
-## 🚀 Run Locally
+##  Run Locally
 
 Clone the project
 
 ```bash
+1️⃣ Clone the project
 git clone https://github.com/kelvintran1605/movie-search-app.git
 cd movie-search-app
+
+2️⃣ Install dependencies
 npm install
+
+3️⃣ Start the development server
 npm run dev
+
+
+The app will be running at:
+👉 http://localhost:5173
