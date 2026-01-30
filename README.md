@@ -45,7 +45,7 @@ Built with React, TypeScript, and the TMDB API.
 Clone the project
 
 ```bash
-git clone https://github.com/yourusername/movie-search-app.git](https://github.com/kelvintran1605/movie-search-app.git
+git clone https://github.com/kelvintran1605/movie-search-app.git
 cd movie-search-app
 npm install
 npm run dev
