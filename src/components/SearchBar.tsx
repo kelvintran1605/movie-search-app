@@ -35,7 +35,7 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
 
   const [selectedOption, setSelectedOption] = useState(options[0]);
 
-  const { data } = useGetSearchMovieQuery(
+  const { data, isLoading } = useGetSearchMovieQuery(
     { query: submittedQuery, option: selectedOption.value as SearchOption },
     { skip: submittedQuery.trim().length < 1 },
   );
@@ -90,6 +90,7 @@ const SearchBar = ({ isOpen = true }: { isOpen?: boolean }) => {
     >
       {isPanelOpen && query.length > 1 && (
         <ResultPanel
+          isLoading={isLoading}
           query={query}
           onPanelOpen={setIsPanelOpen}
           option={selectedOption.value as SearchOption}
