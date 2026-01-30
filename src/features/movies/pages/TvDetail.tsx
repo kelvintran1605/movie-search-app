@@ -19,9 +19,11 @@ import {
   useGetTvReviewsQuery,
   useGetTvTrailerQuery,
 } from "@/services/tvApiSlice";
+import { useAuth } from "@/context/AuthContext";
 
 const TvDetail = () => {
   const [play, setPlay] = useState(false);
+  const { user } = useAuth();
   const { data: watchListMovies } = useGetWatchlistQuery();
   const [addToWatchlist, { isLoading: isAddLoading }] =
     useAddtoWatchListMutation();
@@ -43,6 +45,10 @@ const TvDetail = () => {
   const handleAdd = async () => {
     if (!data) return;
 
+    if (!user) {
+      toast.error("Sign in required to add");
+      return;
+    }
     await addToWatchlist({
       movie_id: data.id,
       title: data.name,
