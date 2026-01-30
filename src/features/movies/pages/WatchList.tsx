@@ -7,14 +7,11 @@ import EmptyWatchlist from "../components/EmptyWatchlist";
 import DataStateWrapper from "@/components/DataStateWrapper";
 
 const WatchList = () => {
-  // Get all the movies in watchlist from supabase
   const { data: movies = [], isLoading, isError } = useGetWatchlistQuery();
 
-  // Manage the sort option list
   const [isSortByOpen, setIsSortByOpen] = useState(false);
   const [sortByValue, setSortByValue] = useState<string>("date.asc");
 
-  // Sort button ref
   const ref = useRef<HTMLDivElement>(null);
 
   const sortByOptions = [
@@ -56,11 +53,9 @@ const WatchList = () => {
     }
   }, [movies, sortByValue]);
 
-  // Get visible movies
   const STEP = 10;
   const [visibleCount, setVisibleCount] = useState(STEP);
 
-  // Visible movies
   const visibleMovies = useMemo(() => {
     return sortedMovies.slice(0, visibleCount);
   }, [sortedMovies, visibleCount]);
@@ -81,19 +76,14 @@ const WatchList = () => {
     );
 
     const el = sentinelRef.current;
-    if (el) {
-      observer.observe(el);
-    }
+    if (el) observer.observe(el);
 
     return () => {
-      if (el) {
-        observer.unobserve(el);
-        observer.disconnect();
-      }
+      if (el) observer.unobserve(el);
+      observer.disconnect();
     };
   }, [hasMore, sortedMovies.length]);
 
-  // Close option modal when clicked
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (!ref.current) return;
@@ -106,7 +96,7 @@ const WatchList = () => {
 
   return (
     <DataStateWrapper isLoading={isLoading} isError={isError}>
-      <div className="w-full h-full p-12 flex flex-col justify-center gap-6 text-slate-900 dark:text-white">
+      <div className="w-full h-full p-6 sm:p-8 md:p-12 flex flex-col gap-6 text-slate-900 dark:text-white">
         <h1 className="font-bold text-2xl">My Watchlist</h1>
 
         <div className="text-slate-600 dark:text-white/70">
@@ -117,16 +107,16 @@ const WatchList = () => {
           ref={ref}
           onClick={() => setIsSortByOpen((prev) => !prev)}
           className="group w-fit text-center px-3 py-2 rounded-xl flex items-center justify-center gap-2 cursor-pointer relative select-none
-        bg-slate-100 text-slate-900 border border-slate-200 hover:bg-slate-200 hover:border-slate-300
-        dark:bg-white/10 dark:text-white dark:border-white/10 dark:hover:bg-white/15"
+          bg-slate-100 text-slate-900 border border-slate-200 hover:bg-slate-200 hover:border-slate-300
+          dark:bg-white/10 dark:text-white dark:border-white/10 dark:hover:bg-white/15"
         >
           <span>{sortByLabel}</span>
           <DropdownIcon className="text-md opacity-80" />
 
           <div
             className={`${isSortByOpen ? "flex" : "hidden"} absolute w-64 left-0 top-14 z-10 rounded-2xl font-medium flex-col overflow-hidden
-          bg-slate-50 border border-slate-200 shadow-xl
-          dark:bg-[#0D0D0D] dark:border-white/10 dark:shadow-none`}
+            bg-slate-50 border border-slate-200 shadow-xl
+            dark:bg-[#0D0D0D] dark:border-white/10 dark:shadow-none`}
             onClick={(e) => e.stopPropagation()}
           >
             {sortByOptions.map((option) => (
@@ -137,8 +127,8 @@ const WatchList = () => {
                   setIsSortByOpen(false);
                 }}
                 className="text-start py-2.5 px-4 duration-150
-              text-slate-800 hover:bg-slate-200/70
-              dark:text-white dark:hover:bg-white/10"
+                text-slate-800 hover:bg-slate-200/70
+                dark:text-white dark:hover:bg-white/10"
               >
                 {option.name}
               </div>
@@ -149,11 +139,12 @@ const WatchList = () => {
         {movies.length === 0 ? (
           <EmptyWatchlist />
         ) : (
-          <div className="flex items-center flex-wrap justify-start gap-8">
+          <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {visibleMovies.map((movie) => (
               <Link
                 key={movie.movie_id}
                 to={`/${movie.type}/${movie.movie_id}`}
+                className="block h-full"
               >
                 <MovieCard
                   name={movie.title}
@@ -166,7 +157,7 @@ const WatchList = () => {
           </div>
         )}
 
-        {visibleCount < sortedMovies.length && (
+        {hasMore && (
           <div
             ref={sentinelRef}
             className="h-12 flex items-center justify-center"
