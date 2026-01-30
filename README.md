@@ -31,6 +31,8 @@ Built with React, TypeScript, and the TMDB API.
 - Vite
 - Tailwind CSS
 - React Router
+- RTK Query
+- Context API
 
 **Backend / Services**
 - TMDB API
